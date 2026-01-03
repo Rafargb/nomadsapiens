@@ -1,0 +1,149 @@
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.secureBadge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #16a34a;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: #f0fdf4;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 3rem;
+}
+
+.card {
+    padding: 2rem;
+    background: #fff;
+    /* Ensure white */
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    border: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: 6px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.activeTab {
+    border-color: var(--primary);
+    background: rgba(80, 34, 195, 0.05);
+    color: var(--primary);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.inputGroup label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--foreground);
+}
+
+.input {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.totalRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 1rem 0;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border);
+}
+
+.totalPrice {
+    color: var(--foreground);
+}
+
+/* Summary */
+.summary {
+    background: #f8fafc;
+    padding: 2rem;
+    border-radius: 8px;
+}
+
+.item {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.thumb {
+    width: 60px;
+    height: 60px;
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.price {
+    margin-left: auto;
+    font-weight: 700;
+}
+
+.policies {
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* Success */
+.successContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    gap: 1.5rem;
+    text-align: center;
+}

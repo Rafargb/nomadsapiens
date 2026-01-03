@@ -1,0 +1,84 @@
+.adminContainer {
+    display: flex;
+    min-height: 100vh;
+    background: #f8fafc;
+    /* Light grey SaaS backround */
+}
+
+.sidebar {
+    width: 260px;
+    background: #ffffff;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    padding: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    border-bottom: 1px solid var(--border);
+}
+
+.nav {
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.navItem {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.navItem:hover {
+    background: #f1f5f9;
+    color: var(--foreground);
+}
+
+.active {
+    background: #f0fdf4;
+    /* Light green tint matching brand or primary */
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.logoutBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: #ef4444;
+    background: none;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    padding: 0.5rem 0;
+}
+
+.content {
+    flex: 1;
+    margin-left: 260px;
+    /* Offset sidebar */
+    padding: 2rem;
+    max-width: 1600px;
+}

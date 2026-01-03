@@ -1,0 +1,29 @@
+.section {
+    padding: 4rem 0;
+    background: #f8fafc;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.text {
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.logos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3rem;
+    align-items: center;
+    opacity: 0.6;
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #94a3b8;
+    letter-spacing: 1px;
+}

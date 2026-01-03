@@ -1,0 +1,7 @@
+.card {
+    position: relative;
+    background: var(--card);
+    /* No more defaults */
+}
+
+/* We remove general hover effects here to let specific components control them */

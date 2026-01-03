@@ -1,0 +1,119 @@
+/* Existing styles... inheriting/overwriting */
+
+.header {
+    height: var(--header-height);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    /* Subtle shadow like Udemy */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Transparent variant for Homepage */
+.transparentHomepage {
+    position: absolute;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Invert colors for transparent header elements */
+.transparentHomepage .link {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.transparentHomepage .link:hover {
+    color: #ffffff;
+}
+
+.transparentHomepage .loginButton {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+.transparentHomepage .loginButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
+}
+
+/* Optional: Invert logo for white background (default state) */
+/* Since the logo is white, we make it black for the white navbar */
+.logoImage {
+    height: 64px;
+    /* Maximized for desktop (H-8px) */
+    width: auto;
+    object-fit: contain;
+    transform-origin: center;
+    transition: filter 0.3s;
+    filter: brightness(0);
+}
+
+/* In transparent mode (Dark background), keep logo white */
+.transparentHomepage .logoImage {
+    filter: none;
+}
+
+/* Adjust button styles? Maybe let them be or outline */
+
+.navContainer {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logoWrapper {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    /* overflow: hidden; Removed to prevent cutting */
+    /* width: 220px; REMOVED: let it be flexible */
+    width: auto;
+    min-width: 150px;
+    /* Ensure click target is reasonable */
+}
+
+@media (max-width: 768px) {
+    .logoWrapper {
+        flex-shrink: 0;
+        width: auto;
+        /* Let it take needed space */
+        min-width: 120px;
+        overflow: visible;
+        /* Don't cut anything */
+        position: relative;
+    }
+
+    .logoImage {
+        height: 36px;
+        /* Good size for mobile header */
+        width: auto;
+        transform: none;
+        /* No zooming/cropping */
+        margin-left: 0;
+    }
+}
+
+.nav {
+    display: flex;
+    gap: 2rem;
+}
+
+.link {
+    color: var(--muted);
+    font-weight: 400;
+    transition: color 0.1s;
+    font-size: 0.9rem;
+}
+
+.link:hover {
+    color: var(--primary);
+}
+
+.actions {
+    display: flex;
+    gap: 0.8rem;
+}

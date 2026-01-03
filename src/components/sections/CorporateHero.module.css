@@ -1,0 +1,112 @@
+.section {
+    padding: 6rem 0;
+    background-color: #f4f6f8;
+    /* Light grey from reference */
+    overflow: hidden;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+/* Image Side */
+.imageWrapper {
+    position: relative;
+    width: 100%;
+    height: 500px;
+}
+
+.imageCard {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    /* Minimal rounding like reference */
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.heroImage {
+    object-fit: cover;
+}
+
+/* Content Side */
+.content {
+    padding-left: 2rem;
+}
+
+.title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #111827;
+    /* Dark charcoal */
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+}
+
+.highlight {
+    color: #5022c3;
+    /* Brand Primary */
+}
+
+.description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #4b5563;
+    margin-bottom: 2.5rem;
+    max-width: 540px;
+}
+
+.bulletPoints {
+    margin-bottom: 3rem;
+}
+
+.bullet {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #5022c3;
+    border-radius: 50%;
+    margin-top: 8px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.bullet p {
+    font-size: 1rem;
+    color: #374151;
+    font-weight: 500;
+}
+
+.actions {
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width: 968px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .content {
+        padding-left: 0;
+        text-align: left;
+    }
+
+    .imageWrapper {
+        height: 350px;
+    }
+
+    .title {
+        font-size: 2.5rem;
+    }
+}

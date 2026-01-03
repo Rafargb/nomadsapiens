@@ -1,0 +1,195 @@
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--foreground);
+}
+
+.actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.section {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.section h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.inputGroup {
+    margin-bottom: 1.5rem;
+}
+
+.inputGroup label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--foreground);
+}
+
+.input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+/* Split Calculator */
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.badge {
+    background: #dcfce7;
+    color: #166534;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.hint {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+}
+
+.splitCard {
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 1rem;
+    border: 1px solid var(--border);
+}
+
+.platformRow,
+.instructorRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex: 1;
+}
+
+.avatar {
+    background: #e2e8f0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.shareInput {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100px;
+    font-weight: 700;
+}
+
+.smallInput {
+    width: 60px;
+    padding: 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    text-align: center;
+}
+
+.earnings {
+    width: 120px;
+    text-align: right;
+    font-weight: 600;
+    color: #16a34a;
+}
+
+.divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0.5rem 0;
+}
+
+.addBtn {
+    margin-top: 1rem;
+    background: none;
+    border: 1px dashed var(--muted);
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.addBtn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* Summary Card */
+.summaryCard {
+    padding: 1.5rem;
+}
+
+.bigPrice {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--foreground);
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.chartWrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    color: var(--primary);
+}
+
+.breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    font-size: 0.9rem;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}

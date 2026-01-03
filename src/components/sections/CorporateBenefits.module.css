@@ -1,0 +1,48 @@
+.section {
+    padding: 6rem 0;
+    background-color: #f4f6f8;
+    /* Continuing grey theme from hero */
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.card {
+    background-color: #1e2532;
+    /* Deep Navy Blue */
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.iconWrapper {
+    margin-bottom: 2rem;
+    color: #6366f1;
+    /* Indigo accent icon */
+}
+
+.cardTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.cardDescription {
+    font-size: 1rem;
+    color: #94a3b8;
+    /* Slate grey text */
+    line-height: 1.6;
+}

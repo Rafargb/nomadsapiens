@@ -1,0 +1,155 @@
+.section {
+    padding: 6rem 0;
+    background: #f8fafc;
+    /* Light grey bg similar to StickyScroll context */
+    overflow: hidden;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.label {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--foreground);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+/* List Side */
+.featuresList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.featureItem {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.featureItem:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.featureItem.active {
+    background: #ffffff;
+    border-color: var(--border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.iconWrapper {
+    width: 48px;
+    height: 48px;
+    background: #e0e7ff;
+    /* Light purple tint */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+
+.active .iconWrapper {
+    background: var(--primary);
+}
+
+.content {
+    flex: 1;
+}
+
+.itemTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+}
+
+.itemDesc {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.progressBarBg {
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    width: 100%;
+    overflow: hidden;
+    margin-top: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.active .progressBarBg {
+    opacity: 1;
+}
+
+.progressBarFill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+/* Image Side */
+.imageContainer {
+    position: relative;
+    height: 500px;
+    width: 100%;
+    perspective: 1000px;
+}
+
+.imageMotionWrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.image {
+    object-fit: cover;
+}
+
+@media (max-width: 968px) {
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .imageContainer {
+        height: 300px;
+        order: -1;
+        /* Image on top for mobile */
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+}

@@ -1,0 +1,31 @@
+.section {
+    padding: 4rem 0;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--foreground);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: var(--foreground);
+    margin-bottom: 2rem;
+}
+
+.embla {
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.slide {
+    flex: 0 0 280px;
+    /* Fixed width cards like Udemy */
+    min-width: 0;
+}

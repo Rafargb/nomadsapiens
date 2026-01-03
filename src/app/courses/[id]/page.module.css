@@ -1,0 +1,265 @@
+.page {
+    /* Page wrapper */
+}
+
+/* Hero Section */
+.heroWrapper {
+    background-color: #1c1d1f;
+    /* Udemy Dark Grey */
+    color: #fff;
+    padding: 2rem 0;
+}
+
+.hero {
+    display: flex;
+    position: relative;
+}
+
+.heroContent {
+    max-width: 700px;
+    /* Leave space for sidebar */
+    padding-right: 2rem;
+}
+
+.breadcrumbs {
+    color: #cec0fc;
+    /* Udemy purple-ish tint or custom */
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.ratingBadge {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: #f69c08;
+    /* Star Gold */
+}
+
+.ratingNumber {
+    font-weight: 800;
+}
+
+.link {
+    color: #cec0fc;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.instructor {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.updateInfo {
+    font-size: 0.85rem;
+    display: flex;
+    gap: 1rem;
+}
+
+/* Layout Container */
+.bodyContainer {
+    position: relative;
+    display: flex;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+    gap: 2rem;
+}
+
+.iconText {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Sticky Sidebar */
+.sidebar {
+    position: absolute;
+    right: 24px;
+    top: -200px;
+    /* Overlap hero */
+    width: 340px;
+    z-index: 10;
+}
+
+.buyBox {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    color: var(--foreground);
+}
+
+.previewVideo {
+    height: 190px;
+    background: #0f172a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+}
+
+.playButton {
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+    transition: transform 0.2s;
+}
+
+.previewVideo:hover .playButton {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.buyContent {
+    padding: 1.5rem;
+}
+
+.priceRow {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.currentPrice {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.originalPrice {
+    text-decoration: line-through;
+    color: var(--muted);
+}
+
+.discount {
+    color: var(--secondary);
+    /* Or a discount red if preferred */
+    font-weight: 700;
+}
+
+.timeAlert {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #b91c1c;
+    /* Urgent red */
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin: 1rem 0;
+}
+
+.guarantee {
+    font-size: 0.8rem;
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 1rem;
+}
+
+.includes {
+    margin-top: 1.5rem;
+}
+
+.includes h4 {
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+}
+
+.includes ul {
+    list-style: none;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.includes li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--foreground);
+}
+
+/* Main Content */
+.mainColumn {
+    flex: 1;
+    max-width: 700px;
+    /* Match hero content width */
+}
+
+.sectionBox {
+    margin-bottom: 3rem;
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.sectionBox h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+}
+
+.learnGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    font-size: 0.95rem;
+}
+
+.learnGrid span {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 1080px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+
+    .bodyContainer {
+        flex-direction: column-reverse;
+        /* Sidebar on top or bottom based on preference, standard is top on mobile but usually simplified */
+    }
+
+    .heroContent {
+        max-width: 100%;
+        padding-right: 0;
+    }
+}

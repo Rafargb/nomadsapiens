@@ -22,7 +22,7 @@ export default function LoginPage() {
             if (email.includes('admin')) {
                 router.push('/admin');
             } else {
-                router.push('/courses');
+                router.push('/courses/netflix');
             }
         }, 1000);
     };

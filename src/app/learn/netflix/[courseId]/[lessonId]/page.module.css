@@ -1,0 +1,360 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #0f0f0f;
+    /* Netflix Black */
+    color: #e5e5e5;
+    font-family: var(--font-sans);
+    overflow: hidden;
+}
+
+.header {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    background-color: hsla(0, 0%, 0%, 0.8);
+    backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 50;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #e5e5e5;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.backButton:hover {
+    color: #ffffff;
+}
+
+.brand {
+    font-weight: 800;
+    color: #E50914;
+    /* Netflix Red-ish accent or your brand color */
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+}
+
+.mainArea {
+    display: flex;
+    flex: 1;
+    margin-top: 64px;
+    /* Header height */
+    overflow: hidden;
+    position: relative;
+}
+
+.videoSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: #000;
+    overflow-y: auto;
+    /* Allow scrolling for content below video */
+}
+
+.videoPlayerWrapper {
+    width: 100%;
+    /* Fixed aspect ratio or min-height? */
+    aspect-ratio: 16/9;
+    max-height: 80vh;
+    flex-shrink: 0;
+    /* Prevent shrinking */
+    position: relative;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contentContainer {
+    padding: 2rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.lessonHeader {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 2rem;
+}
+
+.lessonTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.lessonDescription {
+    color: #aeaeae;
+    line-height: 1.6;
+    font-size: 1.1rem;
+    max-width: 800px;
+}
+
+.resourcesSection {
+    margin-top: 1rem;
+}
+
+.sectionTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.resourceGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.resourceItem {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: #e5e5e5;
+    transition: all 0.2s;
+}
+
+.resourceItem:hover {
+    background: #252525;
+    transform: translateY(-2px);
+    border-color: #555;
+}
+
+.resourceIcon {
+    background: #333;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.resourceInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.resourceName {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.resourceType {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 2px;
+}
+
+/* Simulate the video control bar overlay */
+.videoControlsOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.videoPlayerWrapper:hover .videoControlsOverlay {
+    opacity: 1;
+}
+
+.lessonTitleOverlay {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.descriptionOverlay {
+    max-width: 600px;
+    font-size: 1rem;
+    color: #ccc;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.sidebarToggle {
+    position: absolute;
+    right: 2rem;
+    top: 2rem;
+    z-index: 40;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.sidebarToggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar {
+    width: 350px;
+    background-color: #141414;
+    border-left: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 30;
+    transform: translateX(100%);
+    /* Hidden by default in immersive mode? Or shown? Let's toggle */
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebarHeader {
+    padding: 1.5rem;
+    border-bottom: 1px solid #333;
+}
+
+.sidebarHeader h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.moduleList {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.module {
+    border-bottom: 1px solid #222;
+}
+
+.moduleTitle {
+    padding: 1rem 1.5rem;
+    background: #181818;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.moduleTitle:hover {
+    background: #222;
+}
+
+.lessonList {
+    background: #141414;
+}
+
+.lessonItem {
+    padding: 0.8rem 1.5rem 0.8rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-left: 3px solid transparent;
+}
+
+.lessonItem:hover {
+    background: #222;
+}
+
+.lessonItem.active {
+    background: #222;
+    border-left-color: #E50914;
+    /* Brand accent */
+}
+
+.lessonItem.completed .lessonTitle {
+    color: #888;
+    text-decoration: line-through;
+}
+
+.lessonTitle {
+    font-size: 0.95rem;
+}
+
+.lessonDuration {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Play/Pause Center Icon */
+.bigPlayButton {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(229, 9, 20, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.bigPlayButton:hover {
+    transform: scale(1.1);
+}
+
+.nextButton {
+    background: #E50914;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nextButton:hover {
+    background: #f40612;
+}

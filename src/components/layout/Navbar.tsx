@@ -10,6 +10,11 @@ export const Navbar = () => {
     const pathname = usePathname();
     const isHome = pathname === '/';
 
+    // Hide global navbar for Netflix-style pages (they have their own)
+    if (pathname?.startsWith('/courses/netflix') || pathname?.startsWith('/learn/netflix')) {
+        return null;
+    }
+
     return (
         <header className={`${styles.header} ${isHome ? styles.transparentHomepage : 'glass'}`}>
             <div className={`container ${styles.navContainer}`}>

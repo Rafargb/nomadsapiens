@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={outfit.variable}>
+      <body className={outfit.variable} suppressHydrationWarning>
         <Navbar />
         {children}
       </body>

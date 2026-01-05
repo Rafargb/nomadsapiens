@@ -14,14 +14,17 @@ export default function CreateCoursePage() {
 
     const [formData, setFormData] = useState({
         title: '',
-        instructor: '',
-        price: '',
         image_url: '',
-        description: ''
+        description: '',
+        sales_copy: '',
+        category: 'popular',
+        is_locked: true,
+        match_score: '95%'
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+        setFormData({ ...formData, [e.target.name]: value });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -29,37 +32,31 @@ export default function CreateCoursePage() {
         setIsLoading(true);
         setMessage(null);
 
-        // Basic check if user is logged in
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            setMessage({ type: 'error', text: 'Você precisa estar logado para criar um curso.' });
-            setIsLoading(false);
-            return;
-        }
-
         try {
             const { error } = await supabase.from('courses').insert([
                 {
                     title: formData.title,
-                    instructor: formData.instructor,
-                    price: parseFloat(formData.price),
-                    image_url: formData.image_url || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800', // Default image
-                    rating: 0,
-                    reviews_count: 0
+                    image_url: formData.image_url || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800',
+                    description: formData.description,
+                    sales_copy: formData.sales_copy,
+                    category: formData.category,
+                    is_locked: formData.is_locked,
+                    match_score: formData.match_score
                 }
             ]);
 
             if (error) throw error;
 
-            setMessage({ type: 'success', text: 'Curso criado com sucesso!' });
-            // Reset form or redirect
+            setMessage({ type: 'success', text: 'Curso criado e publicado na Netflix Page!' });
+
+            // Redirect to Netflix page to see content
             setTimeout(() => {
-                router.push('/courses');
+                router.push('/courses/netflix');
             }, 1500);
 
         } catch (err: any) {
             console.error(err);
-            setMessage({ type: 'error', text: err.message || 'Erro ao criar curso.' });
+            setMessage({ type: 'error', text: err.message || 'Erro ao criar curso. Verifique as permissões do banco (RLS).' });
         } finally {
             setIsLoading(false);
         }
@@ -67,7 +64,7 @@ export default function CreateCoursePage() {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>Criar Novo Curso</h1>
+            <h1 className={styles.title}>Adicionar Conteúdo (Estúdio)</h1>
 
             <Card>
                 {message && (
@@ -78,46 +75,44 @@ export default function CreateCoursePage() {
 
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.inputGroup}>
-                        <label>Título do Curso</label>
+                        <label>Título</label>
                         <input
                             name="title"
                             required
                             className={styles.input}
                             value={formData.title}
                             onChange={handleChange}
-                            placeholder="Ex: Marketing Digital 2.0"
+                            placeholder="Ex: Título Cinematográfico"
                         />
                     </div>
 
                     <div className={styles.row}>
                         <div className={styles.inputGroup}>
-                            <label>Nome do Instrutor</label>
-                            <input
-                                name="instructor"
-                                required
-                                className={styles.input}
-                                value={formData.instructor}
-                                onChange={handleChange}
-                                placeholder="Seu nome"
-                            />
+                            <label>Categoria (Onde vai aparecer?)</label>
+                            <select name="category" className={styles.input} value={formData.category} onChange={handleChange}>
+                                <option value="highlight">Banner Gigante (Highlight)</option>
+                                <option value="continue_watching">Minha Lista (Continue)</option>
+                                <option value="next_evolution">Sua Próxima Evolução (Funnel)</option>
+                                <option value="popular">Populares</option>
+                            </select>
                         </div>
                         <div className={styles.inputGroup}>
-                            <label>Preço (R$)</label>
-                            <input
-                                name="price"
-                                type="number"
-                                step="0.01"
-                                required
-                                className={styles.input}
-                                value={formData.price}
-                                onChange={handleChange}
-                                placeholder="99.90"
-                            />
+                            <label>Conteúdo Bloqueado?</label>
+                            <div style={{ marginTop: '10px' }}>
+                                <input
+                                    type="checkbox"
+                                    name="is_locked"
+                                    checked={formData.is_locked}
+                                    onChange={handleChange}
+                                    style={{ transform: 'scale(1.5)', marginRight: '10px' }}
+                                />
+                                <span style={{ fontSize: '0.9rem' }}>Sim (aparece cadeado)</span>
+                            </div>
                         </div>
                     </div>
 
                     <div className={styles.inputGroup}>
-                        <label>URL da Imagem de Capa (Opcional)</label>
+                        <label>URL da Imagem de Capa (16:9)</label>
                         <input
                             name="image_url"
                             className={styles.input}
@@ -128,17 +123,29 @@ export default function CreateCoursePage() {
                     </div>
 
                     <div className={styles.inputGroup}>
-                        <label>Descrição (Breve)</label>
+                        <label>Descrição Curta</label>
                         <textarea
                             name="description"
                             className={styles.textarea}
                             value={formData.description}
                             onChange={handleChange}
+                            placeholder="Aparece no Banner Principal"
+                        />
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                        <label>Copy de Vendas (Para Modal)</label>
+                        <textarea
+                            name="sales_copy"
+                            className={styles.textarea}
+                            value={formData.sales_copy}
+                            onChange={handleChange}
+                            placeholder="Texto persuasivo que aparece no modal de desbloqueio..."
                         />
                     </div>
 
                     <Button type="submit" fullWidth disabled={isLoading}>
-                        {isLoading ? 'Salvando...' : 'Publicar Curso'}
+                        {isLoading ? 'Publicando...' : 'Publicar na Plataforma'}
                     </Button>
                 </form>
             </Card>

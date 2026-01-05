@@ -44,9 +44,9 @@ export const CourseCardHorizontal = ({
                 <p className={styles.instructor}>{instructor}</p>
 
                 <div className={styles.meta}>
-                    <span className={styles.rating}>{rating.toFixed(1)}</span>
-                    <StarRating rating={rating} />
-                    <span className={styles.reviews}>({reviewCount.toLocaleString()})</span>
+                    <span className={styles.rating}>{(rating || 0).toFixed(1)}</span>
+                    <StarRating rating={rating || 0} />
+                    <span className={styles.reviews}>({(reviewCount || 0).toLocaleString()})</span>
                 </div>
 
                 <div className={styles.details}>
@@ -61,8 +61,8 @@ export const CourseCardHorizontal = ({
             </div>
 
             <div className={styles.priceColumn}>
-                <span className={styles.price}>R$ {price.toFixed(2)}</span>
-                <span className={styles.oldPrice}>R$ {(price * 2.5).toFixed(2)}</span>
+                <span className={styles.price}>R$ {(price || 0).toFixed(2)}</span>
+                <span className={styles.oldPrice}>R$ {((price || 0) * 2.5).toFixed(2)}</span>
             </div>
         </Link>
     );

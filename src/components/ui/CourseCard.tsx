@@ -45,7 +45,7 @@ export const CourseCard = ({
                     </div>
 
                     <div className={styles.priceRow}>
-                        <span className={styles.price}>R$ {price.toFixed(2)}</span>
+                        <span className={styles.price}>R$ {(price || 0).toFixed(2)}</span>
                         <span className={styles.oldPrice}>R$ {(price * 2).toFixed(2)}</span>
                     </div>
 

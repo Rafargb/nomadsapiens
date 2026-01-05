@@ -5,68 +5,87 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Play, Info, Lock, X } from 'lucide-react';
 import styles from './page.module.css';
+import { supabase } from '@/lib/supabaseClient';
 
-// Mock Data
-const MY_COURSES = [
-    { id: 1, title: "Torne-se um Nômade Digital", image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800", progress: 35, locked: false },
-    { id: 2, title: "Inglês para Viagem", image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800", progress: 10, locked: false },
-];
-
-const FUNNEL_SUGGESTIONS = [
-    { id: 3, title: "Marketing Digital Avançado", image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800", match: "98%", locked: true },
-    { id: 4, title: "Edição de Vídeo Pro", image: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=800", match: "95%", locked: true },
-    { id: 5, title: "Investimentos Globais", image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800", match: "90%", locked: true },
-];
-
-const RECOMMENDATIONS = [
-    { id: 6, title: "Design com Figma", image: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=800", match: "85%", locked: true },
-    { id: 7, title: "Setup YouTuber", image: "https://images.unsplash.com/photo-1593697820928-601d4a0f44e6?w=800", match: "80%", locked: true },
-    { id: 8, title: "Fotografia Mobile", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800", match: "75%", locked: true },
-];
-
-const HIGHLIGHTS = [
-    {
-        id: 1,
-        title: "Nômade Digital",
-        desc: "Acompanhe a jornada completa de zero a 100 países. Descubra como criar liberdade geográfica e financeira em tempo recorde.",
-        image: "/hero-nomad-v2.jpg",
-        locked: false,
-        salesCopy: "Você já tem acesso! Sua jornada para a liberdade geográfica já começou. Continue assistindo para dominar as técnicas de produtividade em trânsito."
-    },
-    {
-        id: 2,
-        title: "Inglês para o Mundo",
-        desc: "O método definitivo para destravar seu inglês e se comunicar em qualquer lugar do planeta sem medo.",
-        image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80",
-        locked: true,
-        salesCopy: "Imagine pedir seu café em Paris ou negociar um tuk-tuk na Tailândia com total confiança. O mundo se abre quando você fala a língua dele. Desbloqueie agora e destrave sua comunicação global."
-    },
-    {
-        id: 3,
-        title: "Filmmaker Pro",
-        desc: "Aprenda a capturar e editar vídeos cinematográficos usando apenas o seu equipamento atual.",
-        image: "https://images.unsplash.com/photo-1535016120720-40c6874c3b1c?auto=format&fit=crop&w=1600&q=80",
-        locked: true,
-        salesCopy: "Suas viagens merecem mais do que stories de 24 horas. Crie narrativas visuais cinematográficas que inspiram, engajam e podem até financiar sua próxima passagem aérea."
-    }
-];
+interface Course {
+    id: number;
+    title: string;
+    description?: string;
+    image_url: string;
+    sales_copy?: string;
+    is_locked: boolean;
+    category: string;
+    progress?: number;
+    match_score?: string;
+}
 
 export default function NetflixDashboard() {
     const [scrolled, setScrolled] = useState(false);
-    const [heroIndex, setHeroIndex] = useState(0);
-    const [selectedCourse, setSelectedCourse] = useState<any>(null);
-    const [showModal, setShowModal] = useState(false);
+
+    // Auth State (Moved to top)
+    const [user, setUser] = useState<any>(null);
+    const isAdmin = user?.email === 'rafaelbarbosa85rd@gmail.com' || user?.email?.includes('admin');
 
     useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user));
+    }, []);
+    const [heroIndex, setHeroIndex] = useState(0);
+    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+    const [showModal, setShowModal] = useState(false);
+
+    // Data State
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    // Filtered Lists
+    const highlights = courses.filter(c => c.category === 'highlight');
+    const myCourses = courses.filter(c => c.category === 'continue_watching');
+    const funnel = courses.filter(c => c.category === 'next_evolution');
+    const popular = courses.filter(c => c.category === 'popular');
+
+    // Fetch Data from Supabase
+    useEffect(() => {
+        async function fetchCourses() {
+            try {
+                const { data, error } = await supabase.from('courses').select('*').order('id');
+                if (error) {
+                    console.error('Error fetching courses:', error);
+                } else if (data) {
+                    setCourses(data);
+                }
+            } catch (err) {
+                console.error('Unexpected error:', err);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchCourses();
+
+        // Navbar scroll handler
+        const handleScroll = () => setScrolled(window.scrollY > 50);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Billboard Rotation
+    useEffect(() => {
+        if (highlights.length === 0) return;
         const interval = setInterval(() => {
             if (!showModal) {
-                setHeroIndex((prev) => (prev + 1) % HIGHLIGHTS.length);
+                setHeroIndex((prev) => (prev + 1) % highlights.length);
             }
-        }, 10000);
+        }, 8000);
         return () => clearInterval(interval);
-    }, [showModal]);
+    }, [showModal, highlights]);
 
-    // Simple scroll handler would go here (useEffect)
+    if (loading) {
+        return <div className={styles.container} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+            <h1 style={{ marginBottom: '1rem' }}>Carregando Nomad Sapiens...</h1>
+            <p style={{ color: '#666' }}>Conectando ao banco de dados...</p>
+        </div>;
+    }
+
+
 
     return (
         <div className={styles.container}>
@@ -77,9 +96,9 @@ export default function NetflixDashboard() {
                         <Image
                             src="/nomad-iso-transparent.png"
                             alt="N"
-                            width={40}
-                            height={40}
-                            className={styles.logoImage}
+                            width={35}
+                            height={35}
+                            className="object-contain"
                             priority
                         />
                     </Link>
@@ -90,129 +109,159 @@ export default function NetflixDashboard() {
                         <a href="#" className={styles.navLink}>Minha Lista</a>
                     </div>
                 </div>
+
+                <div className="flex items-center gap-4 mr-8 z-50">
+                    {isAdmin && (
+                        <Link href="/admin/courses">
+                            <button className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
+                                Painel Admin
+                            </button>
+                        </Link>
+                    )}
+                    <span className="text-white text-sm cursor-pointer opacity-80 hover:opacity-100">Cursos</span>
+                </div>
             </nav>
 
             {/* Billboard / Hero */}
-            <div className={styles.billboard}>
-                {HIGHLIGHTS.map((item, index) => (
-                    <div
-                        key={item.id}
-                        className={`${styles.billboardItem} ${index === heroIndex ? styles.active : ''}`}
-                    >
-                        <Image
-                            src={item.image}
-                            alt={item.title}
-                            fill
-                            className={styles.billboardBg}
-                            priority={index === 0}
-                        />
-                        <div className={styles.billboardContent}>
-                            <h1 className={styles.billboardTitle}>{item.title}</h1>
-                            <p className={styles.billboardDesc}>
-                                {item.desc}
-                            </p>
-                            <div className={styles.billboardActions}>
-                                {!item.locked ? (
-                                    <Link href="/learn/netflix/1/101">
-                                        <button className={styles.playButton}>
-                                            <Play fill="black" size={24} /> Assistir
+            {highlights.length > 0 && (
+                <div className={styles.billboard}>
+                    {highlights.map((item, index) => (
+                        <div
+                            key={item.id}
+                            className={`${styles.billboardItem} ${index === heroIndex ? styles.active : ''}`}
+                        >
+                            {/* Using explicit img tag or next/image with full URL */}
+                            <img
+                                src={item.image_url}
+                                className={styles.billboardBg}
+                                alt={item.title}
+                                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                            />
+                            <div className={styles.billboardContent}>
+                                <h1 className={styles.billboardTitle}>{item.title}</h1>
+                                <p className={styles.billboardDesc}>
+                                    {item.description}
+                                </p>
+                                <div className={styles.billboardActions}>
+                                    {!item.is_locked ? (
+                                        <Link href="/learn/netflix/1/101">
+                                            <button className={styles.playButton}>
+                                                <Play fill="black" size={24} /> Assistir
+                                            </button>
+                                        </Link>
+                                    ) : (
+                                        <button
+                                            className={styles.playButton}
+                                            onClick={() => { setSelectedCourse(item); setShowModal(true); }}
+                                        >
+                                            <Play fill="black" size={24} /> Desbloquear
                                         </button>
-                                    </Link>
-                                ) : (
+                                    )}
                                     <button
-                                        className={styles.playButton}
+                                        className={styles.infoButton}
                                         onClick={() => { setSelectedCourse(item); setShowModal(true); }}
                                     >
-                                        <Play fill="black" size={24} /> Desbloquear
+                                        <Info size={24} /> Mais Informações
                                     </button>
-                                )}
-                                <button
-                                    className={styles.infoButton}
-                                    onClick={() => { setSelectedCourse(item); setShowModal(true); }}
-                                >
-                                    <Info size={24} /> Mais Informações
-                                </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
 
             {/* Rows Container */}
             <div className={styles.rowsContainer}>
 
                 {/* Meus Cursos (Unlocked) */}
-                <section className={styles.row}>
-                    <h2 className={styles.rowTitle}>Continuar Assistindo</h2>
-                    <div className={styles.slider}>
-                        {MY_COURSES.map(course => (
-                            <Link href={`/learn/netflix/${course.id}/101`} key={course.id}>
-                                <div className={styles.continueCardWrapper}>
-                                    <div className={styles.continueCardInner}>
-                                        <img src={course.image} className={styles.cardImage} alt={course.title} />
+                {myCourses.length > 0 && (
+                    <section className={styles.row}>
+                        <h2 className={styles.rowTitle}>Continuar Assistindo</h2>
+                        <div className={styles.slider}>
+                            {myCourses.map(course => (
+                                <Link href={`/learn/netflix/${course.id}/101`} key={course.id}>
+                                    <div className={styles.continueCardWrapper}>
+                                        <div className={styles.continueCardInner}>
+                                            <img src={course.image_url} className={styles.cardImage} alt={course.title} />
 
-                                        {/* Cinematic Title Overlay (Simulating Logo) */}
-                                        <div className={styles.continueTitle}>
-                                            {course.title}
-                                        </div>
-
-                                        {course.progress > 0 && (
-                                            <div className={styles.progressBar}>
-                                                <div className={styles.progressFill} style={{ width: `${course.progress}%` }}></div>
+                                            {/* Cinematic Title Overlay */}
+                                            <div className={styles.continueTitle}>
+                                                {course.title}
                                             </div>
-                                        )}
+
+                                            {(course.progress || 0) > 0 && (
+                                                <div className={styles.progressBar}>
+                                                    <div className={styles.progressFill} style={{ width: `${course.progress}%` }}></div>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 {/* Funnel (Locked) */}
-                <section className={styles.row}>
-                    <h2 className={styles.rowTitle}>Sua Próxima Evolução</h2>
-                    <div className={styles.slider}>
-                        {FUNNEL_SUGGESTIONS.map(course => (
-                            <div className={styles.cardWrapper} key={course.id}>
-                                <div className={styles.cardInner}>
-                                    <img src={course.image} className={`${styles.cardImage} ${styles.locked}`} alt={course.title} />
-                                    <div className={styles.lockOverlay}>
-                                        <div className={styles.lockIcon}>
-                                            <Lock size={24} />
+                {funnel.length > 0 && (
+                    <section className={styles.row}>
+                        <h2 className={styles.rowTitle}>Sua Próxima Evolução</h2>
+                        <div className={styles.slider}>
+                            {funnel.map(course => (
+                                <div className={styles.cardWrapper} key={course.id} onClick={() => { setSelectedCourse(course); setShowModal(true); }}>
+                                    <div className={styles.cardInner}>
+                                        <img src={course.image_url} className={`${styles.cardImage} ${course.is_locked ? styles.locked : ''}`} alt={course.title} />
+                                        {course.is_locked && (
+                                            <div className={styles.lockOverlay}>
+                                                <div className={styles.lockIcon}>
+                                                    <Lock size={24} />
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className={styles.cardContent}>
+                                            <div className={styles.cardTitle}>{course.title}</div>
+                                            <div className={styles.cardMeta}>Bloqueado</div>
                                         </div>
                                     </div>
-                                    <div className={styles.cardContent}>
-                                        <div className={styles.cardTitle}>{course.title}</div>
-                                        <div className={styles.cardMeta}>Bloqueado</div>
-                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 {/* Recommendations (Locked) */}
-                <section className={styles.row}>
-                    <h2 className={styles.rowTitle}>Populares na Nomad</h2>
-                    <div className={styles.slider}>
-                        {RECOMMENDATIONS.map(course => (
-                            <div className={styles.cardWrapper} key={`rec-${course.id}`}>
-                                <div className={styles.cardInner}>
-                                    <img src={course.image} className={`${styles.cardImage} ${styles.locked}`} alt={course.title} />
-                                    <div className={styles.lockOverlay}>
-                                        <div className={styles.lockIcon}>
-                                            <Lock size={24} />
+                {popular.length > 0 && (
+                    <section className={styles.row}>
+                        <h2 className={styles.rowTitle}>Populares na Nomad</h2>
+                        <div className={styles.slider}>
+                            {popular.map(course => (
+                                <div className={styles.cardWrapper} key={`rec-${course.id}`} onClick={() => { setSelectedCourse(course); setShowModal(true); }}>
+                                    <div className={styles.cardInner}>
+                                        <img src={course.image_url} className={`${styles.cardImage} ${course.is_locked ? styles.locked : ''}`} alt={course.title} />
+                                        {course.is_locked && (
+                                            <div className={styles.lockOverlay}>
+                                                <div className={styles.lockIcon}>
+                                                    <Lock size={24} />
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className={styles.cardContent}>
+                                            <div className={styles.cardTitle}>{course.title}</div>
+                                            <div className={styles.cardMeta}>{course.match_score || '90%'} Relevante</div>
                                         </div>
                                     </div>
-                                    <div className={styles.cardContent}>
-                                        <div className={styles.cardTitle}>{course.title}</div>
-                                        <div className={styles.cardMeta}>{course.match} Relevante</div>
-                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {courses.length === 0 && !loading && (
+                    <div style={{ padding: '4rem', textAlign: 'center' }}>
+                        <h2>Nenhum curso encontrado.</h2>
+                        <p>Verifique se você rodou o script SQL no Supabase.</p>
                     </div>
-                </section>
+                )}
 
             </div>
             {/* Modal */}
@@ -223,20 +272,19 @@ export default function NetflixDashboard() {
                             <X size={24} />
                         </button>
                         <div className={styles.modalHero}>
-                            <Image
-                                src={selectedCourse.image}
+                            <img
+                                src={selectedCourse.image_url}
                                 alt={selectedCourse.title}
-                                fill
-                                style={{ objectFit: 'cover' }}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
                         </div>
                         <div className={styles.modalDetails}>
                             <h2 className={styles.modalTitle}>{selectedCourse.title}</h2>
                             <p className={styles.salesCopy}>
-                                {selectedCourse.salesCopy}
+                                {selectedCourse.sales_copy || selectedCourse.description}
                             </p>
 
-                            {selectedCourse.locked ? (
+                            {selectedCourse.is_locked ? (
                                 <Link href="#" className={styles.unlockButton}>
                                     Desbloquear Acesso Especial
                                 </Link>

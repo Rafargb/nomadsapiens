@@ -115,5 +115,34 @@
 
 .actions {
     display: flex;
+    align-items: center;
     gap: 0.8rem;
+}
+
+.desktopOnlyLink {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.5rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .desktopOnlyLink {
+        display: none;
+    }
+}
+
+.mobileOnlyNav {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobileOnlyNav {
+        display: flex;
+    }
+
+    /* Hide nav container margins if needed */
+    .nav {
+        gap: 1rem;
+    }
 }

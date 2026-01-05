@@ -6,25 +6,43 @@ import { Card } from '@/components/ui/Card';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        setError(null);
 
-        // Mock login logic
-        setTimeout(() => {
-            setIsLoading(false);
-            if (email.includes('admin')) {
-                router.push('/admin');
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            if (error) throw error;
+
+            console.log("Login successful:", data);
+
+            // Check for admin simply by email (Temporary solution before RBAC)
+            if (email.includes('admin') || email === 'rafaelbarbosa85rd@gmail.com') {
+                router.push('/courses/netflix'); // Or /admin
             } else {
                 router.push('/courses/netflix');
             }
-        }, 1000);
+
+        } catch (err: any) {
+            console.error("Login error:", err);
+            setError(err.message || 'Falha ao entrar. Verifique suas credenciais.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -34,6 +52,12 @@ export default function LoginPage() {
                     <h1 className="text-gradient">Bem-vindo de volta</h1>
                     <p>Acesse sua conta para continuar aprendendo ou ensinando.</p>
                 </div>
+
+                {error && (
+                    <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleLogin} className={styles.form}>
                     <div className={styles.inputGroup}>
@@ -49,7 +73,14 @@ export default function LoginPage() {
                     </div>
                     <div className={styles.inputGroup}>
                         <label>Senha</label>
-                        <input type="password" placeholder="••••••••" className={styles.input} required />
+                        <input
+                            type="password"
+                            placeholder="••••••••"
+                            className={styles.input}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
                     </div>
 
                     <Button fullWidth size="lg" disabled={isLoading}>

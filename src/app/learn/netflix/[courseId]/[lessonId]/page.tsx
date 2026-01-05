@@ -1,65 +1,148 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Play, FastForward, Check, ChevronDown, ChevronUp, List, X } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
+import { ArrowLeft, Play, X, List, ChevronDown, RefreshCw, Check } from 'lucide-react';
+import { useRouter, useParams } from 'next/navigation';
 import styles from './page.module.css';
 
-// Mock data for seamless preview
-const MOCK_COURSE = {
-    title: "Torne-se um Nômade Digital",
-    modules: [
-        {
-            id: 1,
-            title: "Seção 1: Introdução",
-            lessons: [
-                { id: 101, title: "Bem-vindo ao curso", duration: "5m", completed: true },
-                { id: 102, title: "O que é um Nômade Digital?", duration: "12m", completed: false },
-                { id: 103, title: "Mitos e Verdades", duration: "8m", completed: false },
-            ]
-        },
-        {
-            id: 2,
-            title: "Seção 2: Planejamento",
-            lessons: [
-                { id: 201, title: "Finanças Pessoais", duration: "15m", completed: false },
-                { id: 202, title: "Escolhendo o País", duration: "20m", completed: false },
-            ]
-        }
-    ]
-};
+interface Lesson {
+    id: number;
+    title: string;
+    description: string;
+    video_url: string;
+    duration: string;
+    position: number;
+}
 
-export default function NetflixLearnPage({ params }: { params: { courseId: string, lessonId: string } }) {
-    const [sidebarOpen, setSidebarOpen] = useState(true); // Open by default for clarity
-    const [openModules, setOpenModules] = useState<number[]>([1]); // Default open first module
+interface Course {
+    id: number;
+    title: string;
+    description: string;
+}
 
-    const toggleModule = (id: number) => {
-        if (openModules.includes(id)) {
-            setOpenModules(openModules.filter(m => m !== id));
-        } else {
-            setOpenModules([...openModules, id]);
+export default function NetflixLearnPage() {
+    const router = useRouter();
+    const params = useParams();
+    const courseId = params?.courseId as string;
+    const lessonId = params?.lessonId as string;
+
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+
+    // Data State
+    const [course, setCourse] = useState<Course | null>(null);
+    const [lessons, setLessons] = useState<Lesson[]>([]);
+    const [currentLesson, setCurrentLesson] = useState<Lesson | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Fetch Data
+    useEffect(() => {
+        if (!courseId) return;
+
+        async function loadContent() {
+            setLoading(true);
+            try {
+                // 1. Fetch Course Details
+                const { data: courseData, error: courseError } = await supabase
+                    .from('courses')
+                    .select('*')
+                    .eq('id', courseId)
+                    .single();
+
+                if (courseError) {
+                    console.error("Course error:", courseError);
+                }
+                if (courseData) setCourse(courseData);
+
+                // 2. Fetch Lessons for this Course
+                const { data: lessonsData, error: lessonsError } = await supabase
+                    .from('lessons')
+                    .select('*')
+                    .eq('course_id', courseId)
+                    .order('position', { ascending: true });
+
+                if (lessonsError) throw lessonsError;
+
+                if (lessonsData) {
+                    setLessons(lessonsData);
+
+                    // 3. Find Current Lesson
+                    let active = null;
+                    if (lessonId) {
+                        active = lessonsData.find(l => l.id.toString() === lessonId);
+                    }
+
+                    // If not found or no ID provided, default to first
+                    if (!active && lessonsData.length > 0) {
+                        active = lessonsData[0];
+                    }
+
+                    if (active) {
+                        setCurrentLesson(active);
+                    }
+                }
+            } catch (err: any) {
+                console.error("Error loading content:", err);
+                setError("Não foi possível carregar a aula. Verifique se o curso possui conteúdo.");
+            } finally {
+                setLoading(false);
+            }
         }
+
+        loadContent();
+    }, [courseId, lessonId]);
+
+    // Helper for Video URL
+    const getEmbedUrl = (url: string) => {
+        if (!url) return '';
+        let videoId = '';
+        if (url.includes('youtube.com/watch?v=')) {
+            videoId = url.split('v=')[1]?.split('&')[0];
+        } else if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1];
+        } else if (url.includes('youtube.com/embed/')) {
+            return url;
+        }
+
+        if (videoId) return `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&rel=0&modestbranding=1&iv_load_policy=3`;
+
+        return url; // Fallback
     };
+
+    if (loading) {
+        return <div className="h-screen flex items-center justify-center text-white bg-black">
+            <RefreshCw className="animate-spin mr-2" /> Carregando Aula...
+        </div>;
+    }
+
+    if (error || !currentLesson) {
+        return <div className="h-screen flex flex-col items-center justify-center text-white bg-black p-4">
+            <h2 className="text-xl mb-4">{error || "Nenhuma aula encontrada para este curso."}</h2>
+            <Link href="/courses/netflix">
+                <button className="bg-red-600 px-4 py-2 rounded">Voltar para Cursos</button>
+            </Link>
+        </div>;
+    }
 
     return (
         <div className={styles.container}>
-            {/* Header / Navbar Minimalista */}
+            {/* Header */}
             <header className={styles.header}>
                 <Link href="/courses/netflix" className={styles.backButton}>
                     <ArrowLeft size={24} />
                     <span>Voltar para Cursos</span>
                 </Link>
-                {/* Brand removed or replaced by Course Title optionally */}
-                <div className={styles.brand}></div>
-                <div className="w-8"></div> {/* Spacer to center brand if needed */}
+                {course && <div className={styles.brand}>{course.title}</div>}
+                <div className="w-8"></div>
             </header>
 
-            {/* Main Content Area */}
+            {/* Main Content */}
             <main className={styles.mainArea}>
 
-                {/* Video / Player Section */}
+                {/* Video Section */}
                 <section className={styles.videoSection} style={{ marginRight: sidebarOpen ? '350px' : '0', transition: 'margin-right 0.3s' }}>
-
                     <button
                         className={styles.sidebarToggle}
                         onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -69,96 +152,74 @@ export default function NetflixLearnPage({ params }: { params: { courseId: strin
                     </button>
 
                     <div className={styles.videoPlayerWrapper}>
-                        {/* Placeholder for video frame */}
-                        <div style={{ width: '100%', height: '100%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            {/* Static Image or Poster could go here */}
-                            <div className={styles.bigPlayButton}>
-                                <Play size={32} fill="white" />
-                            </div>
-                        </div>
+                        {currentLesson.video_url.includes('youtube') || currentLesson.video_url.includes('youtu.be') ? (
+                            <iframe
+                                src={getEmbedUrl(currentLesson.video_url)}
+                                title={currentLesson.title}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                style={{ width: '100%', height: '100%', border: 'none' }}
+                            />
+                        ) : (
+                            <video
+                                src={currentLesson.video_url}
+                                controls
+                                autoPlay
+                                className="w-full h-full object-contain bg-black"
+                                controlsList="nodownload"
+                            >
+                                Seu navegador não suporta o player de vídeo.
+                            </video>
+                        )}
                     </div>
 
-                    {/* Content Below Video */}
                     <div className={styles.contentContainer}>
                         <div className={styles.lessonHeader}>
-                            <h1 className={styles.lessonTitle}>Aula 1: Bem-vindo ao curso</h1>
+                            <div className="flex justify-between items-start mb-2">
+                                <h1 className={styles.lessonTitle}>{currentLesson.position}. {currentLesson.title}</h1>
+                            </div>
                             <p className={styles.lessonDescription}>
-                                Nesta introdução rápida, vamos alinhar as expectativas e preparar você para a jornada de liberdade geográfica. Discutiremos os pilares fundamentais do nomadismo digital e como este curso foi estruturado para levar você do zero à sua primeira viagem trabalhando.
+                                {currentLesson.description || "Sem descrição disponível."}
                             </p>
                         </div>
-
-                        <div className={styles.resourcesSection}>
-                            <h2 className={styles.sectionTitle}>Material de Apoio</h2>
-                            <div className={styles.resourceGrid}>
-                                <a href="#" className={styles.resourceItem}>
-                                    <div className={styles.resourceIcon}>
-                                        <div className="text-red-500 font-bold">PDF</div>
-                                    </div>
-                                    <div className={styles.resourceInfo}>
-                                        <span className={styles.resourceName}>Resumo da Aula.pdf</span>
-                                        <span className={styles.resourceType}>Documento • 2.4 MB</span>
-                                    </div>
-                                </a>
-                                <a href="#" className={styles.resourceItem}>
-                                    <div className={styles.resourceIcon}>
-                                        <div className="text-blue-500 font-bold">MP3</div>
-                                    </div>
-                                    <div className={styles.resourceInfo}>
-                                        <span className={styles.resourceName}>Audiobook da Aula</span>
-                                        <span className={styles.resourceType}>Audio • 15 min</span>
-                                    </div>
-                                </a>
-                                <a href="#" className={styles.resourceItem}>
-                                    <div className={styles.resourceIcon}>
-                                        <div className="text-green-500 font-bold">XLS</div>
-                                    </div>
-                                    <div className={styles.resourceInfo}>
-                                        <span className={styles.resourceName}>Planilha de Custos</span>
-                                        <span className={styles.resourceType}>Planilha • 120 KB</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-
                     </div>
                 </section>
 
-                {/* Sidebar / Curriculum */}
+                {/* Sidebar Playlist */}
                 <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : ''}`}>
                     <div className={styles.sidebarHeader}>
-                        <h3>{MOCK_COURSE.title}</h3>
+                        <h3>Conteúdo do Curso</h3>
                     </div>
 
                     <div className={styles.moduleList}>
-                        {MOCK_COURSE.modules.map((module) => (
-                            <div key={module.id} className={styles.module}>
-                                <div
-                                    className={styles.moduleTitle}
-                                    onClick={() => toggleModule(module.id)}
-                                >
-                                    <span>{module.title}</span>
-                                    {openModules.includes(module.id) ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        {lessons.length === 0 ? (
+                            <div className="p-4 text-gray-500">Nenhuma aula cadastrada.</div>
+                        ) : (
+                            <div className={styles.module}>
+                                <div className={styles.moduleTitle} style={{ cursor: 'default' }}>
+                                    <span>Lista de Aulas</span>
+                                    <ChevronDown size={16} />
                                 </div>
 
-                                {openModules.includes(module.id) && (
-                                    <div className={styles.lessonList}>
-                                        {module.lessons.map((lesson) => (
+                                <div className={styles.lessonList} style={{ display: 'block' }}>
+                                    {lessons.map((lesson) => (
+                                        <Link href={`/learn/netflix/${courseId}/${lesson.id}`} key={lesson.id}>
                                             <div
-                                                key={lesson.id}
-                                                className={`${styles.lessonItem} ${lesson.id === 101 ? styles.active : ''} ${lesson.completed ? styles.completed : ''}`}
+                                                className={`${styles.lessonItem} ${lesson.id === currentLesson.id ? styles.active : ''}`}
                                             >
                                                 <div>
-                                                    <div className={styles.lessonTitle}>{lesson.title}</div>
-                                                    <span className={styles.lessonDuration}>{lesson.duration}</span>
+                                                    <div className={styles.lessonTitle}>{lesson.position}. {lesson.title}</div>
+                                                    <span className={styles.lessonDuration}>{lesson.duration || '10m'}</span>
                                                 </div>
-                                                {lesson.completed && <Check size={16} color="#4ade80" />}
-                                                {!lesson.completed && lesson.id === 101 && <Play size={14} fill="white" />}
+                                                {lesson.id === currentLesson.id && <Play size={14} fill="white" />}
+                                                {lesson.id !== currentLesson.id && <Check size={14} className="opacity-0" />}
+                                                {/* Check placeholder */}
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </aside>
             </main>

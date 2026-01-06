@@ -79,7 +79,7 @@ export const Navbar = () => {
                             <Link href="/login" className={`hidden md:block ${styles.hiddenMobile}`}>
                                 <Button variant={isHome ? "secondary" : "ghost"} size="sm" className={`${styles.loginButton} text-white`}>Entrar</Button>
                             </Link>
-                            <Link href="/courses/netflix">
+                            <Link href="/courses">
                                 {/* Mobile: Simplified button */}
                                 <Button variant="primary" size="sm" className="bg-white text-black hover:bg-gray-200 border-none font-bold text-xs px-4">
                                     Começar

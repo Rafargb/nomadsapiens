@@ -3,6 +3,8 @@ import { CoursesBrowser } from '@/components/features/CoursesBrowser';
 import styles from './page.module.css';
 import { supabase } from '@/lib/supabaseClient';
 
+export const dynamic = 'force-dynamic';
+
 // This is a Server Component
 export default async function CoursesPage() {
 

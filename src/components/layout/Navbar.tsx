@@ -89,20 +89,38 @@ export const Navbar = () => {
                                 </Button>
 
                                 {userMenuOpen && (
-                                    <>
-                                        <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)}></div>
-                                        <div
-                                            className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-xl overflow-hidden py-2"
-                                            style={{ backgroundColor: 'white', zIndex: 60, border: '1px solid #eee' }} // Force white background
+                                    <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center animate-in fade-in duration-200">
+                                        <button
+                                            className="absolute top-6 right-6 text-white p-2"
+                                            onClick={() => setUserMenuOpen(false)}
                                         >
-                                            <Link href="/courses" className="block px-4 py-3 text-sm font-bold text-black hover:bg-gray-100 border-b border-gray-100" onClick={() => setUserMenuOpen(false)}>
-                                                Explorar Cursos
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                        </button>
+
+                                        <nav className="flex flex-col items-center gap-8">
+                                            <Link
+                                                href="/"
+                                                className="text-2xl font-bold text-white hover:text-gray-300 transition-colors"
+                                                onClick={() => setUserMenuOpen(false)}
+                                            >
+                                                Início
                                             </Link>
-                                            <Link href="/login" className="block px-4 py-3 text-sm font-bold text-black hover:bg-gray-100" onClick={() => setUserMenuOpen(false)}>
-                                                Fazer Login
+                                            <Link
+                                                href="/courses"
+                                                className="text-2xl font-bold text-white hover:text-gray-300 transition-colors"
+                                                onClick={() => setUserMenuOpen(false)}
+                                            >
+                                                Cursos
                                             </Link>
-                                        </div>
-                                    </>
+                                            <Link
+                                                href="/login"
+                                                className="text-2xl font-bold text-white hover:text-gray-300 transition-colors"
+                                                onClick={() => setUserMenuOpen(false)}
+                                            >
+                                                Entrar
+                                            </Link>
+                                        </nav>
+                                    </div>
                                 )}
                             </div>
 

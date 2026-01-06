@@ -59,7 +59,7 @@ export const Navbar = () => {
 
                 <div className={styles.actions}>
                     {/* Desktop Only Nav Link */}
-                    <Link href="/courses/netflix" className={`${styles.link} hidden md:block text-white hover:text-gray-300 mr-4`}>Cursos</Link>
+                    <Link href="/courses/netflix" className={`${styles.link} ${styles.hiddenMobile} hidden md:block text-white hover:text-gray-300 mr-4`}>Cursos</Link>
 
                     {user ? (
                         <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export const Navbar = () => {
                         </div>
                     ) : (
                         <div className="flex items-center gap-2">
-                            <Link href="/login" className="hidden md:block">
+                            <Link href="/login" className={`hidden md:block ${styles.hiddenMobile}`}>
                                 <Button variant={isHome ? "secondary" : "ghost"} size="sm" className={`${styles.loginButton} text-white`}>Entrar</Button>
                             </Link>
                             <Link href="/courses/netflix">

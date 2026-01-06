@@ -9,6 +9,14 @@
     overflow: hidden;
 }
 
+@media (max-width: 768px) {
+    .section {
+        align-items: flex-start;
+        padding-top: 30vh;
+        /* Move text up on mobile */
+    }
+}
+
 .background {
     position: absolute;
     inset: 0;

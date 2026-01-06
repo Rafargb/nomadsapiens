@@ -13,7 +13,7 @@ export const Navbar = () => {
     const router = useRouter(); // Import useRouter check
     const isHome = pathname === '/';
     const [user, setUser] = useState<any>(null);
-    const [userMenuOpen, setUserMenuOpen] = useState(false);
+
 
     // Check Auth State
     useEffect(() => {
@@ -77,62 +77,31 @@ export const Navbar = () => {
                         </div>
                     ) : (
                         <div className="flex items-center gap-4">
-                            {/* Mobile Dropdown Menu (Visible only on mobile) */}
-                            <div className="relative md:hidden">
-                                <Button
-                                    variant="primary"
-                                    size="sm"
-                                    className="bg-white text-black hover:bg-gray-200 border-none font-bold text-xs px-4 flex items-center gap-2"
-                                    onClick={() => setUserMenuOpen(!userMenuOpen)}
-                                >
-                                    Menu
-                                </Button>
-
-                                {userMenuOpen && (
-                                    <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center animate-in fade-in duration-200">
-                                        <button
-                                            className="absolute top-6 right-6 text-white p-2"
-                                            onClick={() => setUserMenuOpen(false)}
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                        </button>
-
-                                        <nav className="flex flex-col items-center gap-8">
-                                            <Link
-                                                href="/"
-                                                className="text-2xl font-bold text-white hover:text-gray-300 transition-colors"
-                                                onClick={() => setUserMenuOpen(false)}
-                                            >
-                                                Início
-                                            </Link>
-                                            <Link
-                                                href="/courses"
-                                                className="text-2xl font-bold text-white hover:text-gray-300 transition-colors"
-                                                onClick={() => setUserMenuOpen(false)}
-                                            >
-                                                Cursos
-                                            </Link>
-                                            <Link
-                                                href="/login"
-                                                className="text-2xl font-bold text-white hover:text-gray-300 transition-colors"
-                                                onClick={() => setUserMenuOpen(false)}
-                                            >
-                                                Entrar
-                                            </Link>
-                                        </nav>
-                                    </div>
-                                )}
+                            {/* Mobile Actions: Simple & Direct */}
+                            <div className="flex md:hidden items-center gap-3">
+                                <Link href="/login">
+                                    <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 text-xs font-medium">
+                                        Entrar
+                                    </Button>
+                                </Link>
+                                <Link href="/courses">
+                                    <Button variant="primary" size="sm" className="bg-white text-black hover:bg-gray-200 border-none font-bold text-xs px-4">
+                                        Começar
+                                    </Button>
+                                </Link>
                             </div>
 
                             {/* Desktop Buttons (Hidden on mobile) */}
-                            <Link href="/login" className={`hidden md:block ${styles.hiddenMobile}`}>
-                                <Button variant={isHome ? "secondary" : "ghost"} size="sm" className={`${styles.loginButton} text-white`}>Entrar</Button>
-                            </Link>
-                            <Link href="/courses/netflix" className={`hidden md:block ${styles.hiddenMobile}`}>
-                                <Button variant="primary" size="sm" className="bg-white text-black hover:bg-gray-200 border-none font-bold text-xs px-4">
-                                    Começar
-                                </Button>
-                            </Link>
+                            <div className="hidden md:flex items-center gap-2">
+                                <Link href="/login" className={styles.hiddenMobile}>
+                                    <Button variant={isHome ? "secondary" : "ghost"} size="sm" className={`${styles.loginButton} text-white`}>Entrar</Button>
+                                </Link>
+                                <Link href="/courses/netflix" className={styles.hiddenMobile}>
+                                    <Button variant="primary" size="sm" className="bg-white text-black hover:bg-gray-200 border-none font-bold text-xs px-4">
+                                        Começar
+                                    </Button>
+                                </Link>
+                            </div>
                         </div>
                     )}
                 </div>

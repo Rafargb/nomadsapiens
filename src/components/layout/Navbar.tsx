@@ -13,6 +13,7 @@ export const Navbar = () => {
     const router = useRouter(); // Import useRouter check
     const isHome = pathname === '/';
     const [user, setUser] = useState<any>(null);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
 
     // Check Auth State
     useEffect(() => {
@@ -75,12 +76,38 @@ export const Navbar = () => {
                             </Button>
                         </div>
                     ) : (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-4">
+                            {/* Mobile Dropdown Menu (Visible only on mobile) */}
+                            <div className="relative md:hidden">
+                                <Button
+                                    variant="primary"
+                                    size="sm"
+                                    className="bg-white text-black hover:bg-gray-200 border-none font-bold text-xs px-4 flex items-center gap-2"
+                                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                                >
+                                    Menu
+                                </Button>
+
+                                {userMenuOpen && (
+                                    <>
+                                        <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)}></div>
+                                        <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl overflow-hidden py-2 z-50 transform -translate-x-full left-full">
+                                            <Link href="/courses" className="block px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-100 border-b border-gray-100" onClick={() => setUserMenuOpen(false)}>
+                                                Explorar Cursos
+                                            </Link>
+                                            <Link href="/login" className="block px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-100" onClick={() => setUserMenuOpen(false)}>
+                                                Fazer Login
+                                            </Link>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Desktop Buttons (Hidden on mobile) */}
                             <Link href="/login" className={`hidden md:block ${styles.hiddenMobile}`}>
                                 <Button variant={isHome ? "secondary" : "ghost"} size="sm" className={`${styles.loginButton} text-white`}>Entrar</Button>
                             </Link>
-                            <Link href="/courses">
-                                {/* Mobile: Simplified button */}
+                            <Link href="/courses/netflix" className={`hidden md:block ${styles.hiddenMobile}`}>
                                 <Button variant="primary" size="sm" className="bg-white text-black hover:bg-gray-200 border-none font-bold text-xs px-4">
                                     Começar
                                 </Button>

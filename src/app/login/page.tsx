@@ -45,6 +45,21 @@ export default function LoginPage() {
         }
     };
 
+    const handleGoogleLogin = async () => {
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${window.location.origin}/courses/netflix`,
+                },
+            });
+            if (error) throw error;
+        } catch (err: any) {
+            console.error("Google Login Error:", err);
+            setError(err.message || "Erro ao conectar com Google.");
+        }
+    };
+
     return (
         <div className={styles.container}>
             <Card className={styles.loginCard}>
@@ -91,7 +106,7 @@ export default function LoginPage() {
                         <span>ou</span>
                     </div>
 
-                    <Button fullWidth variant="secondary" type="button">
+                    <Button fullWidth variant="secondary" type="button" onClick={handleGoogleLogin}>
                         Continuar com Google
                     </Button>
                 </form>

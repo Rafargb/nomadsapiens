@@ -193,3 +193,52 @@
     display: flex;
     flex-direction: column;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .h1 {
+        font-size: 1.6rem;
+    }
+
+    .layout {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 1rem;
+    }
+
+    /* Hide detailed filters on mobile for cleaner look or make them collapsible? 
+       For MVP, let's keep them but stacked to avoid breaking layout. */
+    .filterSection {
+        padding: 0.5rem 0;
+    }
+
+    .toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .toolbarLeft {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .featuredHero {
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+
+    .relatedTopics {
+        gap: 0.5rem;
+    }
+
+    .topicPill {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+}

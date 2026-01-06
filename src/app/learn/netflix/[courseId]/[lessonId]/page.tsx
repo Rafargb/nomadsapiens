@@ -36,6 +36,7 @@ export default function NetflixLearnPage() {
     const [currentLesson, setCurrentLesson] = useState<Lesson | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [accessDenied, setAccessDenied] = useState(false);
 
     // Fetch Data
     useEffect(() => {
@@ -44,6 +45,10 @@ export default function NetflixLearnPage() {
         async function loadContent() {
             setLoading(true);
             try {
+                // 0. Get Session
+                const { data: { session } } = await supabase.auth.getSession();
+                const user = session?.user;
+
                 // 1. Fetch Course Details
                 const { data: courseData, error: courseError } = await supabase
                     .from('courses')
@@ -51,12 +56,41 @@ export default function NetflixLearnPage() {
                     .eq('id', courseId)
                     .single();
 
-                if (courseError) {
-                    console.error("Course error:", courseError);
+                if (courseError || !courseData) {
+                    throw new Error("Curso não encontrado.");
                 }
-                if (courseData) setCourse(courseData);
+                setCourse(courseData);
 
-                // 2. Fetch Lessons for this Course
+                // 2. CHECK ACCESS (Enrollment)
+                if (courseData.is_locked) {
+                    // Allow access if: User is Admin OR User is Enrolled
+                    const isAdmin = user?.email === 'rafaelbarbosa85rd@gmail.com' || user?.email?.includes('admin');
+
+                    if (!isAdmin) {
+                        if (!user) {
+                            // Not logged in -> Denied
+                            setAccessDenied(true);
+                            setLoading(false);
+                            return;
+                        }
+
+                        const { data: enrollment } = await supabase
+                            .from('enrollments')
+                            .select('id')
+                            .eq('user_id', user.id)
+                            .eq('course_id', courseId)
+                            .single();
+
+                        if (!enrollment) {
+                            // No enrollment -> Denied
+                            setAccessDenied(true);
+                            setLoading(false);
+                            return;
+                        }
+                    }
+                }
+
+                // 3. Fetch Lessons for this Course
                 const { data: lessonsData, error: lessonsError } = await supabase
                     .from('lessons')
                     .select('*')
@@ -68,7 +102,7 @@ export default function NetflixLearnPage() {
                 if (lessonsData) {
                     setLessons(lessonsData);
 
-                    // 3. Find Current Lesson
+                    // 4. Find Current Lesson
                     let active = null;
                     if (lessonId) {
                         active = lessonsData.find(l => l.id.toString() === lessonId);
@@ -85,7 +119,7 @@ export default function NetflixLearnPage() {
                 }
             } catch (err: any) {
                 console.error("Error loading content:", err);
-                setError("Não foi possível carregar a aula. Verifique se o curso possui conteúdo.");
+                setError(err.message || "Não foi possível carregar a aula.");
             } finally {
                 setLoading(false);
             }
@@ -113,15 +147,40 @@ export default function NetflixLearnPage() {
 
     if (loading) {
         return <div className="h-screen flex items-center justify-center text-white bg-black">
-            <RefreshCw className="animate-spin mr-2" /> Carregando Aula...
+            <RefreshCw className="animate-spin mr-2" /> Verificando acesso...
         </div>;
+    }
+
+    if (accessDenied) {
+        return (
+            <div className="h-screen flex flex-col items-center justify-center text-white bg-[#141414] p-4 text-center">
+                <div className="bg-red-600/20 p-6 rounded-full mb-6">
+                    <Check className="text-red-500" size={64} style={{ transform: 'rotate(45deg)' }} />
+                    {/* Hacky Lock Icon (using rotated X or actually import Lock if possible later, for now Check rotated acts as block symbol or just simple placeholder) */}
+                </div>
+                <h1 className="text-3xl font-bold mb-4">Conteúdo Exclusivo</h1>
+                <p className="text-gray-400 max-w-md mb-8">
+                    Esta aula faz parte de um curso premium. Adquira o acesso completo para desbloquear todas as aulas.
+                </p>
+                <Link href={`/offer/${courseId}`}>
+                    <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded font-bold text-lg transition-colors">
+                        Desbloquear Acesso Agora
+                    </button>
+                </Link>
+                <div className="mt-4">
+                    <Link href="/courses/netflix" className="text-gray-500 hover:text-white text-sm">
+                        Voltar para o Início
+                    </Link>
+                </div>
+            </div>
+        );
     }
 
     if (error || !currentLesson) {
         return <div className="h-screen flex flex-col items-center justify-center text-white bg-black p-4">
-            <h2 className="text-xl mb-4">{error || "Nenhuma aula encontrada para este curso."}</h2>
+            <h2 className="text-xl mb-4">{error || "Nenhuma aula encontrada."}</h2>
             <Link href="/courses/netflix">
-                <button className="bg-red-600 px-4 py-2 rounded">Voltar para Cursos</button>
+                <button className="bg-red-600 px-4 py-2 rounded">Voltar</button>
             </Link>
         </div>;
     }
@@ -212,8 +271,7 @@ export default function NetflixLearnPage() {
                                                     <span className={styles.lessonDuration}>{lesson.duration || '10m'}</span>
                                                 </div>
                                                 {lesson.id === currentLesson.id && <Play size={14} fill="white" />}
-                                                {lesson.id !== currentLesson.id && <Check size={14} className="opacity-0" />}
-                                                {/* Check placeholder */}
+                                                {/* Lock icon for future enhancement if lesson locked indv */}
                                             </div>
                                         </Link>
                                     ))}

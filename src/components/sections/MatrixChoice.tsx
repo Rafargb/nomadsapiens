@@ -97,7 +97,7 @@ const ANIMATIONS = {
             opacity: 0,
             transition: { duration: 0.2 },
         },
-    },
+    } as Variants,
     item: {
         hidden: { opacity: 0, y: 20, filter: 'blur(10px)' },
         visible: {
@@ -107,31 +107,32 @@ const ANIMATIONS = {
             transition: { type: 'spring', stiffness: 100, damping: 20 },
         },
         exit: { opacity: 0, y: -10, filter: 'blur(5px)' },
-    },
-    image: (isLeft: boolean): Variants => ({
-        initial: {
-            opacity: 0,
-            scale: 1.5,
-            filter: 'blur(15px)',
-            rotate: isLeft ? -30 : 30,
-            x: isLeft ? -80 : 80,
-        },
-        animate: {
-            opacity: 1,
-            scale: 1,
-            filter: 'blur(0px)',
-            rotate: 0,
-            x: 0,
-            transition: { type: 'spring', stiffness: 260, damping: 20 },
-        },
-        exit: {
-            opacity: 0,
-            scale: 0.6,
-            filter: 'blur(20px)',
-            transition: { duration: 0.25 },
-        },
-    }),
+    } as Variants,
 };
+
+const getImageVariants = (isLeft: boolean): Variants => ({
+    initial: {
+        opacity: 0,
+        scale: 1.5,
+        filter: 'blur(15px)',
+        rotate: isLeft ? -30 : 30,
+        x: isLeft ? -80 : 80,
+    },
+    animate: {
+        opacity: 1,
+        scale: 1,
+        filter: 'blur(0px)',
+        rotate: 0,
+        x: 0,
+        transition: { type: 'spring', stiffness: 260, damping: 20 },
+    },
+    exit: {
+        opacity: 0,
+        scale: 0.6,
+        filter: 'blur(20px)',
+        transition: { duration: 0.25 },
+    },
+});
 
 // =========================================
 // 3. SUB-COMPONENTS
@@ -179,7 +180,7 @@ const ChoiceVisual = ({ data, isLeft }: { data: ChoiceData; isLeft: boolean }) =
                         key={data.id}
                         src={data.image}
                         alt={`${data.title}`}
-                        variants={ANIMATIONS.image(isLeft)}
+                        variants={getImageVariants(isLeft)}
                         initial="initial"
                         animate="animate"
                         exit="exit"

@@ -91,11 +91,14 @@ export const Navbar = () => {
                                 {userMenuOpen && (
                                     <>
                                         <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)}></div>
-                                        <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl overflow-hidden py-2 z-50 transform -translate-x-full left-full">
-                                            <Link href="/courses" className="block px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-100 border-b border-gray-100" onClick={() => setUserMenuOpen(false)}>
+                                        <div
+                                            className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-xl overflow-hidden py-2"
+                                            style={{ backgroundColor: 'white', zIndex: 60, border: '1px solid #eee' }} // Force white background
+                                        >
+                                            <Link href="/courses" className="block px-4 py-3 text-sm font-bold text-black hover:bg-gray-100 border-b border-gray-100" onClick={() => setUserMenuOpen(false)}>
                                                 Explorar Cursos
                                             </Link>
-                                            <Link href="/login" className="block px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-100" onClick={() => setUserMenuOpen(false)}>
+                                            <Link href="/login" className="block px-4 py-3 text-sm font-bold text-black hover:bg-gray-100" onClick={() => setUserMenuOpen(false)}>
                                                 Fazer Login
                                             </Link>
                                         </div>

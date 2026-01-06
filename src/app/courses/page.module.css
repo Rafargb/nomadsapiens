@@ -195,6 +195,7 @@
 }
 
 /* Mobile Responsiveness */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
     .h1 {
         font-size: 1.6rem;
@@ -205,40 +206,80 @@
         gap: 1.5rem;
     }
 
+    /* Mobile Sidebar (Slide-over) */
     .sidebar {
-        width: 100%;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 1rem;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 85%;
+        max-width: 320px;
+        background: #fff;
+        z-index: 50;
+        padding: 1.5rem;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow-y: auto;
     }
 
-    /* Hide detailed filters on mobile for cleaner look or make them collapsible? 
-       For MVP, let's keep them but stacked to avoid breaking layout. */
+    .sidebar.showMobile {
+        transform: translateX(0);
+    }
+
+    .mobileFilterHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .mobileFilterHeader h3 {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--foreground);
+    }
+
+    .closeBtn {
+        background: none;
+        border: none;
+        color: var(--muted);
+        cursor: pointer;
+    }
+
     .filterSection {
-        padding: 0.5rem 0;
+        padding: 0.8rem 0;
     }
 
     .toolbar {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        /* Keep toolbar horizontal on mobile for Filter btn + Sort */
+        flex-wrap: wrap;
         gap: 1rem;
     }
 
     .toolbarLeft {
         width: 100%;
+        display: flex;
         justify-content: space-between;
     }
 
     .featuredHero {
-        flex-direction: column;
-        padding: 1.5rem;
+        display: none;
+        /* Hide hero on mobile to save space? Or stack it. Let's hide for focus. */
     }
 
     .relatedTopics {
-        gap: 0.5rem;
+        display: none;
+        /* Hide pills on mobile */
     }
+}
 
-    .topicPill {
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
+/* Desktop Defaults (restore sidebar visibility) */
+@media (min-width: 769px) {
+    .mobileFilterHeader {
+        display: none;
     }
 }

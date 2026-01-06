@@ -57,37 +57,35 @@ export const Navbar = () => {
                     />
                 </Link>
 
-                {/* Mobile Only Nav Link */}
-                <nav className={`${styles.nav} ${styles.mobileOnlyNav}`}>
-                    <Link href="/courses" className={styles.link}>Cursos</Link>
-                </nav>
-
                 <div className={styles.actions}>
                     {/* Desktop Only Nav Link */}
-                    <Link href="/courses" className={`${styles.link} ${styles.desktopOnlyLink}`}>Cursos</Link>
+                    <Link href="/courses/netflix" className={`${styles.link} hidden md:block text-white hover:text-gray-300 mr-4`}>Cursos</Link>
 
                     {user ? (
-                        <>
+                        <div className="flex items-center gap-2">
                             {isAdmin && (
                                 <Link href="/admin/courses">
-                                    <Button variant="primary" size="sm" className="bg-red-600 hover:bg-red-700 border-none">
-                                        Painel Admin
+                                    <Button variant="primary" size="sm" className="bg-red-600 hover:bg-red-700 border-none text-xs px-2 py-1">
+                                        Admin
                                     </Button>
                                 </Link>
                             )}
                             <Button variant="ghost" size="sm" onClick={handleLogout} className={isHome ? "text-white" : ""}>
                                 Sair
                             </Button>
-                        </>
+                        </div>
                     ) : (
-                        <>
-                            <Link href="/login">
-                                <Button variant={isHome ? "secondary" : "ghost"} size="sm" className={styles.loginButton}>Entrar</Button>
+                        <div className="flex items-center gap-2">
+                            <Link href="/login" className="hidden md:block">
+                                <Button variant={isHome ? "secondary" : "ghost"} size="sm" className={`${styles.loginButton} text-white`}>Entrar</Button>
                             </Link>
-                            <Link href="/register">
-                                <Button variant="primary" size="sm">Começar Jornada</Button>
+                            <Link href="/courses/netflix">
+                                {/* Mobile: Simplified button */}
+                                <Button variant="primary" size="sm" className="bg-white text-black hover:bg-gray-200 border-none font-bold text-xs px-4">
+                                    Começar
+                                </Button>
                             </Link>
-                        </>
+                        </div>
                     )}
                 </div>
             </div>

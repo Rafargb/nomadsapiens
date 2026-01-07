@@ -161,7 +161,7 @@ export const Navbar = () => {
                     ) : (
                         <div className="flex items-center gap-4">
                             {/* Mobile Actions: Simple & Direct */}
-                            <div className="flex md:hidden items-center gap-3">
+                            <div className={styles.mobileButtons}>
                                 <Link href="/login">
                                     <Button
                                         variant="ghost"
@@ -180,7 +180,7 @@ export const Navbar = () => {
                             </div>
 
                             {/* Desktop Buttons (Hidden on mobile) */}
-                            <div className="hidden md:flex items-center gap-2">
+                            <div className={styles.desktopButtons}>
                                 <Link href="/login" className={styles.hiddenMobile}>
                                     <Button variant={isHome ? "secondary" : "ghost"} size="sm" className={`${styles.loginButton} text-white`}>Entrar</Button>
                                 </Link>

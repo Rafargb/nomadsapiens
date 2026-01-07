@@ -34,7 +34,8 @@ export default function LoginPage() {
             if (email.includes('admin') || email === 'rafaelbarbosa85rd@gmail.com') {
                 router.push('/courses/netflix'); // Or /admin
             } else {
-                router.push('/courses/netflix');
+                // Redirect regular users to the public course catalog (Vitrine)
+                router.push('/courses');
             }
 
         } catch (err: any) {
@@ -50,7 +51,8 @@ export default function LoginPage() {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/courses/netflix`,
+                    // Redirect to public catalog after Google Login
+                    redirectTo: `${window.location.origin}/courses`,
                 },
             });
             if (error) throw error;

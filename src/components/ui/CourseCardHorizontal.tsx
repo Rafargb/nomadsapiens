@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { StarRating } from '@/components/ui/StarRating';
 import styles from './CourseCardHorizontal.module.css';
+import { Lock, PlayCircle } from 'lucide-react';
 
 interface CourseCardHorizontalProps {
     id: number;
@@ -12,10 +13,11 @@ interface CourseCardHorizontalProps {
     price: number;
     image: string;
     bestseller?: boolean;
-    description?: string; // Short summary often shown in list view
+    description?: string;
     lectures?: number;
     duration?: string;
     level?: string;
+    isLocked?: boolean;
 }
 
 export const CourseCardHorizontal = ({
@@ -30,12 +32,29 @@ export const CourseCardHorizontal = ({
     description = "Aprenda tudo o que você precisa saber para dominar esta habilidade do zero ao avançado.",
     lectures = 42,
     duration = "8h 30m",
-    level = "Todos os níveis"
+    level = "Todos os níveis",
+    isLocked = true
 }: CourseCardHorizontalProps) => {
+    // Destination URL based on lock status
+    // If locked -> Sales Page. If unlocked -> Player (assuming lesson 1 for now)
+    const destination = isLocked ? `/courses/${id}` : `/learn/netflix/${id}/1`;
+
     return (
-        <Link href={`/courses/${id}`} className={styles.container}>
+        <Link href={destination} className={styles.container}>
             <div className={styles.imageWrapper}>
                 <Image src={image} alt={title} fill className={styles.image} />
+                {/* Overlay Icon */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
+                    {isLocked ? (
+                        <div className="bg-black/50 p-2 rounded-full backdrop-blur-sm">
+                            <Lock className="text-white w-6 h-6 opacity-70" />
+                        </div>
+                    ) : (
+                        <div className="bg-primary/90 p-3 rounded-full shadow-lg scale-110">
+                            <PlayCircle className="text-white w-8 h-8 fill-current" />
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className={styles.content}>
@@ -57,12 +76,22 @@ export const CourseCardHorizontal = ({
                     <span>{level}</span>
                 </div>
 
-                {bestseller && <div className={styles.badge}>Mais Vendido</div>}
+                {bestseller && isLocked && <div className={styles.badge}>Mais Vendido</div>}
+                {!isLocked && <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">SEU CURSO</div>}
             </div>
 
             <div className={styles.priceColumn}>
-                <span className={styles.price}>R$ {(price || 0).toFixed(2)}</span>
-                <span className={styles.oldPrice}>R$ {((price || 0) * 2.5).toFixed(2)}</span>
+                {isLocked ? (
+                    <>
+                        <span className={styles.price}>R$ {(price || 0).toFixed(2)}</span>
+                        <span className={styles.oldPrice}>R$ {((price || 0) * 2.5).toFixed(2)}</span>
+                    </>
+                ) : (
+                    <div className="flex flex-col items-end">
+                        <span className="text-green-600 font-bold text-lg">Liberado</span>
+                        <span className="text-xs text-gray-500">Toque para assistir</span>
+                    </div>
+                )}
             </div>
         </Link>
     );

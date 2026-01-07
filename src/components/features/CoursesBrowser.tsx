@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CourseCardHorizontal } from '@/components/ui/CourseCardHorizontal';
 import { Button } from '@/components/ui/Button';
 import { ChevronDown, SlidersHorizontal, X } from 'lucide-react';
 import styles from '@/app/courses/page.module.css';
+import { supabase } from '@/lib/supabaseClient';
 
 interface CoursesBrowserProps {
     courses: any[];
@@ -12,6 +13,36 @@ interface CoursesBrowserProps {
 
 export function CoursesBrowser({ courses }: CoursesBrowserProps) {
     const [showFilters, setShowFilters] = useState(false);
+    const [unlockedCourseIds, setUnlockedCourseIds] = useState<string[]>([]);
+    const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+
+    useEffect(() => {
+        const checkEnrollments = async () => {
+            setIsLoadingAuth(true);
+            try {
+                // 1. Check if user is logged in
+                const { data: { user } } = await supabase.auth.getUser();
+
+                if (user) {
+                    // 2. Fetch enrollments for this user
+                    const { data: enrollments, error } = await supabase
+                        .from('enrollments')
+                        .select('course_id')
+                        .eq('user_id', user.id);
+
+                    if (enrollments) {
+                        setUnlockedCourseIds(enrollments.map((e: any) => e.course_id));
+                    }
+                }
+            } catch (error) {
+                console.error("Error checking enrollments:", error);
+            } finally {
+                setIsLoadingAuth(false);
+            }
+        };
+
+        checkEnrollments();
+    }, []);
 
     return (
         <div className={`container ${styles.layout}`}>
@@ -99,6 +130,7 @@ export function CoursesBrowser({ courses }: CoursesBrowserProps) {
                                 price={course.price}
                                 image={course.image_url}
                                 bestseller={(course.rating || 0) > 4.7}
+                                isLocked={!unlockedCourseIds.includes(course.id)}
                             />
                         ))
                     ) : (

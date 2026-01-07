@@ -118,10 +118,6 @@ export default function LoginPage() {
                     <p className={styles.hint}>
                         Dica: Use <strong>admin@nomad.com</strong> para ver o painel de instrutor.
                     </p>
-                    {/* DEBUG INFO - REMOVE LATER */}
-                    <p className="text-xs text-gray-300 mt-4 text-center break-all">
-                        Server: {process.env.NEXT_PUBLIC_SUPABASE_URL}
-                    </p>
                 </div>
             </Card>
         </div>

@@ -98,30 +98,60 @@ export const Navbar = () => {
                             </button>
 
                             {userMenuOpen && (
-                                <div className="absolute right-0 mt-3 w-72 bg-[#141414] border border-white/10 rounded-2xl shadow-2xl py-2 z-50 backdrop-blur-md ring-1 ring-white/5">
-                                    <div className="px-5 py-4 border-b border-white/10 mb-2">
-                                        <p className="text-white text-base font-bold truncate">{user.user_metadata?.full_name || 'Alun@ Nomad'}</p>
-                                        <p className="text-gray-400 text-sm truncate mt-1">{user.email}</p>
+                                <div className="absolute right-0 mt-3 w-80 bg-[#1e1e1e] border border-white/10 rounded-3xl shadow-2xl py-2 z-50 backdrop-blur-md ring-1 ring-white/5 overflow-hidden">
+                                    {/* Google Style Header */}
+                                    <div className="flex flex-col items-center justify-center pt-6 pb-4 border-b border-white/10 bg-white/5 mx-2 rounded-t-2xl">
+                                        <div className="w-20 h-20 rounded-full overflow-hidden mb-3 border-4 border-[#1e1e1e] shadow-lg">
+                                            {user.user_metadata?.avatar_url ? (
+                                                <Image
+                                                    src={user.user_metadata.avatar_url}
+                                                    width={80}
+                                                    height={80}
+                                                    alt="Avatar"
+                                                    className="object-cover w-full h-full"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full bg-gray-700 flex items-center justify-center">
+                                                    <span className="text-white font-bold text-2xl">
+                                                        {user.email?.charAt(0).toUpperCase()}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <p className="text-white text-lg font-bold truncate max-w-[90%]">{user.user_metadata?.full_name || 'Alun@ Nomad'}</p>
+                                        <p className="text-gray-400 text-sm truncate max-w-[90%]">{user.email}</p>
                                     </div>
 
-                                    <div className="py-1">
+                                    <div className="py-2 px-2">
                                         {isAdmin && (
-                                            <Link href="/admin/courses" className="block px-5 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white flex items-center gap-4 transition-colors">
-                                                <Settings size={18} /> Painel Admin
+                                            <Link href="/admin/courses" className="flex items-center gap-4 px-4 py-3 text-sm text-gray-200 hover:bg-white/5 rounded-xl transition-colors mb-1">
+                                                <div className="p-2 bg-blue-500/10 rounded-full text-blue-400">
+                                                    <Settings size={20} />
+                                                </div>
+                                                <span className="font-medium">Painel Admin</span>
                                             </Link>
                                         )}
 
-                                        <Link href="/courses" className="block px-5 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white flex items-center gap-4 transition-colors">
-                                            <User size={18} /> Vitrine de Cursos
+                                        <Link href="/courses" className="flex items-center gap-4 px-4 py-3 text-sm text-gray-200 hover:bg-white/5 rounded-xl transition-colors">
+                                            <div className="p-2 bg-green-500/10 rounded-full text-green-400">
+                                                <User size={20} />
+                                            </div>
+                                            <div>
+                                                <span className="font-medium block">Vitrine de Cursos</span>
+                                                <span className="text-xs text-gray-500">Explore novos conteúdos</span>
+                                            </div>
                                         </Link>
                                     </div>
 
-                                    <div className="border-t border-white/10 mt-2 pt-2 pb-1">
+                                    <div className="border-t border-white/10 mt-1 pt-2 pb-2 px-2">
                                         <button
                                             onClick={handleLogout}
-                                            className="w-full text-left px-5 py-3 text-sm text-red-500 hover:bg-red-500/10 flex items-center gap-4 transition-colors"
+                                            className="w-full flex items-center gap-4 px-4 py-3 text-sm text-gray-200 hover:bg-red-500/10 rounded-xl transition-colors text-left"
                                         >
-                                            <LogOut size={18} /> Sair
+                                            <div className="p-2 bg-red-500/10 rounded-full text-red-400">
+                                                <LogOut size={20} />
+                                            </div>
+                                            <span className="font-medium">Sair</span>
                                         </button>
                                     </div>
                                 </div>

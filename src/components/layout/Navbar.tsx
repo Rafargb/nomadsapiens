@@ -77,24 +77,25 @@ export const Navbar = () => {
                         <div className="relative ml-4" onClick={(e) => e.stopPropagation()}>
                             <button
                                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                                className="flex items-center gap-2 focus:outline-none group"
+                                className="flex items-center justify-center focus:outline-none group transition-transform active:scale-95"
                             >
-                                <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-800 flex items-center justify-center border-2 border-transparent group-hover:border-white/20 transition-all">
+                                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent group-hover:border-white/20 transition-all shadow-sm">
                                     {user.user_metadata?.avatar_url ? (
                                         <Image
                                             src={user.user_metadata.avatar_url}
-                                            width={36}
-                                            height={36}
+                                            width={40}
+                                            height={40}
                                             alt="Avatar"
                                             className="object-cover w-full h-full"
                                         />
                                     ) : (
-                                        <span className="text-white font-bold text-sm">
-                                            {user.email?.charAt(0).toUpperCase()}
-                                        </span>
+                                        <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
+                                            <span className="text-white font-bold text-sm">
+                                                {user.email?.charAt(0).toUpperCase()}
+                                            </span>
+                                        </div>
                                     )}
                                 </div>
-                                <ChevronDown size={14} className={`text-white transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
                             </button>
 
                             {userMenuOpen && (
@@ -165,7 +166,8 @@ export const Navbar = () => {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className={`${isHome ? 'text-white border border-white/30 bg-white/10' : 'text-gray-900 bg-gray-100'} text-xs font-bold px-3 py-1 transition-all rounded-full`}
+                                        className={`${isHome ? 'border border-white/30 bg-white/10' : 'text-gray-900 bg-gray-100'} text-xs font-bold px-3 py-1 transition-all rounded-full`}
+                                        style={isHome ? { color: '#ffffff' } : {}}
                                     >
                                         Entrar
                                     </Button>

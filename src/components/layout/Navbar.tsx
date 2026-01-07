@@ -7,12 +7,14 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import styles from './Navbar.module.css';
 import { supabase } from '@/lib/supabaseClient';
+import { User, LogOut, Settings, ChevronDown } from 'lucide-react';
 
 export const Navbar = () => {
     const pathname = usePathname();
-    const router = useRouter(); // Import useRouter check
+    const router = useRouter();
     const isHome = pathname === '/';
     const [user, setUser] = useState<any>(null);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
 
 
     // Check Auth State
@@ -31,6 +33,15 @@ export const Navbar = () => {
 
         return () => subscription.unsubscribe();
     }, []);
+
+    // Close menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = () => setUserMenuOpen(false);
+        if (userMenuOpen) {
+            document.addEventListener('click', handleClickOutside);
+        }
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [userMenuOpen]);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -63,17 +74,56 @@ export const Navbar = () => {
                     <Link href="/courses" className={`${styles.link} ${styles.hiddenMobile} hidden md:block text-white hover:text-gray-300 mr-4`}>Cursos</Link>
 
                     {user ? (
-                        <div className="flex items-center gap-2">
-                            {isAdmin && (
-                                <Link href="/admin/courses">
-                                    <Button variant="primary" size="sm" className="bg-red-600 hover:bg-red-700 border-none text-xs px-2 py-1">
-                                        Admin
-                                    </Button>
-                                </Link>
+                        <div className="relative ml-4" onClick={(e) => e.stopPropagation()}>
+                            <button
+                                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                                className="flex items-center gap-2 focus:outline-none group"
+                            >
+                                <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-800 flex items-center justify-center border-2 border-transparent group-hover:border-white/20 transition-all">
+                                    {user.user_metadata?.avatar_url ? (
+                                        <Image
+                                            src={user.user_metadata.avatar_url}
+                                            width={36}
+                                            height={36}
+                                            alt="Avatar"
+                                            className="object-cover w-full h-full"
+                                        />
+                                    ) : (
+                                        <span className="text-white font-bold text-sm">
+                                            {user.email?.charAt(0).toUpperCase()}
+                                        </span>
+                                    )}
+                                </div>
+                                <ChevronDown size={14} className={`text-white transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {userMenuOpen && (
+                                <div className="absolute right-0 mt-2 w-56 bg-[#141414] border border-white/10 rounded-xl shadow-2xl py-2 z-50 backdrop-blur-md">
+                                    <div className="px-4 py-3 border-b border-white/10 mb-2">
+                                        <p className="text-white text-sm font-bold truncate">{user.user_metadata?.full_name || 'Alun@ Nomad'}</p>
+                                        <p className="text-gray-400 text-xs truncate">{user.email}</p>
+                                    </div>
+
+                                    {isAdmin && (
+                                        <Link href="/admin/courses" className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors">
+                                            <Settings size={16} /> Painel Admin
+                                        </Link>
+                                    )}
+
+                                    <Link href="/courses" className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors">
+                                        <User size={16} /> Vitrine de Cursos
+                                    </Link>
+
+                                    <div className="border-t border-white/10 my-2 pt-2">
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 flex items-center gap-3 transition-colors"
+                                        >
+                                            <LogOut size={16} /> Sair
+                                        </button>
+                                    </div>
+                                </div>
                             )}
-                            <Button variant="ghost" size="sm" onClick={handleLogout} className={isHome ? "text-white" : ""}>
-                                Sair
-                            </Button>
                         </div>
                     ) : (
                         <div className="flex items-center gap-4">

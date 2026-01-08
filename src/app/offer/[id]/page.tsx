@@ -137,7 +137,7 @@ export default function OfferPage() {
                         </div>
 
                         {/* Stripe Area - No Flex wrappers that confuse iframe resizing */}
-                        <div className="w-full flex-1 overflow-y-auto -webkit-overflow-scrolling-touch bg-white">
+                        <div className="w-full flex-1 overflow-y-auto -webkit-overflow-scrolling-touch bg-white px-3 sm:px-0">
                             <EmbeddedCheckoutProvider
                                 stripe={stripePromise}
                                 options={{ clientSecret }}

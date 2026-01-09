@@ -137,7 +137,7 @@ export default function CheckoutPage() {
                         <div className={styles.item}>
                             <div className="relative w-[60px] h-[60px] rounded overflow-hidden flex-shrink-0 bg-gray-200">
                                 <img
-                                    src="/logo.png"
+                                    src="/nomad-sapiens-logo.png"
                                     alt="Capa do Curso"
                                     className="w-full h-full object-cover"
                                 />

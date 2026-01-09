@@ -35,7 +35,7 @@ export async function POST(request: Request) {
                 userId: userId,
                 courseId: courseId.toString(),
             },
-        });
+        } as any);
 
         return NextResponse.json({ clientSecret: session.client_secret });
     } catch (error: any) {

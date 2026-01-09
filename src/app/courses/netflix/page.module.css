@@ -72,8 +72,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin-bottom: -100px;
-    /* Gentle overlap to merge "Sua Lista" into the black fade */
+    margin-bottom: 0px;
+    /* No overlap, rely on gradient blend */
 }
 
 .billboardItem {
@@ -530,7 +530,8 @@
 
     .billboard {
         height: 60vh;
-        margin-bottom: -50px;
+        margin-bottom: 0;
+        /* Fix mobile overlap/breaking */
     }
 
     .billboardContent {
@@ -606,8 +607,8 @@
     }
 
     .emptyStateCore {
-        padding-top: 3rem;
-        /* Balanced spacing for mobile */
+        padding-top: 2rem;
+        /* Clean, standard spacing */
     }
 }
 

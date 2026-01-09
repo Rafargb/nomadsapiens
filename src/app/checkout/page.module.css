@@ -179,3 +179,10 @@
     gap: 1.5rem;
     text-align: center;
 }
+
+/* Force hide Stripe Link floating button if it persists */
+:global(.p-LinkButton),
+:global(#Link-authentication-element),
+:global(.LinkAuthenticationElement) {
+    display: none !important;
+}

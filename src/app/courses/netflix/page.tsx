@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Play, Info, Lock, X } from 'lucide-react';
+import { Play, Info, Lock, X, Search, Bell, ChevronDown } from 'lucide-react';
 import styles from './page.module.css';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -122,35 +122,51 @@ export default function NetflixDashboard() {
 
     return (
         <div className={styles.container}>
-            {/* Navbar Overlay */}
+            {/* Navbar */}
             <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
                 <div className={styles.navLeft}>
                     <Link href="/" className={styles.logo}>
                         <Image
                             src="/nomad-iso-transparent.png"
                             alt="N"
-                            width={35}
-                            height={35}
+                            width={30}
+                            height={30}
                             className="object-contain"
                             priority
                         />
                     </Link>
                     <div className={styles.navLinks}>
                         <Link href="/" className={`${styles.navLink} ${styles.active}`}>Início</Link>
+                        <a href="#" className={styles.navLink}>Séries</a>
+                        <a href="#" className={styles.navLink}>Filmes</a>
+                        <a href="#" className={styles.navLink}>Bombando</a>
                         <a href="#" className={styles.navLink}>Minha Lista</a>
-                        <a href="#" className={styles.navLink}>Explorar</a>
+                        <a href="#" className={styles.navLink}>Navegar por idiomas</a>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 mr-8 z-50">
+                <div className={styles.navRight}>
+                    <div className={styles.navIcon}>
+                        <Search size={20} color="white" />
+                    </div>
+                    <span className={styles.navTextLink}>Infantil</span>
+                    <div className={styles.navIcon}>
+                        <Bell size={20} color="white" />
+                        <span className={styles.notificationBadge}>12</span>
+                    </div>
+                    <div className={styles.navProfile}>
+                        <div className={styles.avatar}>
+                            <img src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg" alt="User" />
+                        </div>
+                        <ChevronDown size={14} color="white" className="ml-1 transition-transform group-hover:rotate-180" />
+                    </div>
+
+                    {/* Admin Button (kept discreetly) */}
                     {isAdmin && (
-                        <Link href="/admin/courses">
-                            <button className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
-                                Painel Admin
-                            </button>
+                        <Link href="/admin/courses" className="ml-4">
+                            <span className="text-xs text-red-500 border border-red-500 px-2 py-1 rounded hover:bg-red-500 hover:text-white transition-colors">Admin</span>
                         </Link>
                     )}
-                    <span className="text-white text-sm cursor-pointer opacity-80 hover:opacity-100">Cursos</span>
                 </div>
             </nav>
 

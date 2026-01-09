@@ -49,11 +49,13 @@
     /* Added spacing from logo */
 }
 
+/* Navigation Links */
 .navLink {
     color: #e5e5e5;
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s;
+    font-size: 0.85rem;
+    /* Slightly smaller for Netflix look */
+    transition: color 0.3s;
 }
 
 .navLink:hover {
@@ -63,6 +65,72 @@
 .navLink.active {
     font-weight: 700;
     color: #fff;
+    cursor: default;
+}
+
+/* Right Navigation */
+.navRight {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    font-size: 0.9rem;
+    color: white;
+}
+
+.navIcon {
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navTextLink {
+    font-size: 0.85rem;
+    color: #e5e5e5;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.navTextLink:hover {
+    color: #b3b3b3;
+}
+
+.notificationBadge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #e50914;
+    color: white;
+    font-size: 0.55rem;
+    font-weight: bold;
+    padding: 0.1rem 0.2rem;
+    border-radius: 50%;
+    min-width: 14px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navProfile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 0.2rem;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* Billboard / Hero Section */
@@ -526,6 +594,14 @@
 
     /* Hide specific links to avoid overlap */
     .navLink:not(.active) {
+        display: none;
+    }
+
+    .navRight {
+        gap: 0.8rem;
+    }
+
+    .navTextLink {
         display: none;
     }
 

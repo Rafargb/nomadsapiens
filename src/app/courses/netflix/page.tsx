@@ -249,7 +249,9 @@ export default function NetflixDashboard() {
                             'marketing': 'Marketing Digital',
                             'productivity': 'Produtividade e Alta Performance',
                             'tech': 'Tecnologia e Inovação',
-                            'business': 'Negócios e Empreendedorismo'
+                            'business': 'Negócios e Empreendedorismo',
+                            'continue_watching': 'Continue Assistindo',
+                            'next_evolution': 'Sua Próxima Evolução'
                         };
 
                         // Use translation or fallback to Capitalized key

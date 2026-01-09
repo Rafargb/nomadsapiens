@@ -48,7 +48,16 @@ function CheckoutForm({ price, clientSecret }: { price: number, clientSecret: st
     return (
         <form className={styles.form} onSubmit={handleSubmit}>
             {/* We use Stripe's PaymentElement which handles tabs for Card/Pix internally and elegantly */}
-            <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
+            <PaymentElement
+                id="payment-element"
+                options={{
+                    layout: "tabs",
+                    wallets: {
+                        applePay: 'never',
+                        googlePay: 'never'
+                    }
+                }}
+            />
 
             {message && <div id="payment-message" className="text-red-500 text-sm mt-2">{message}</div>}
 

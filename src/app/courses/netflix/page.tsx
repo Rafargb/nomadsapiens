@@ -228,8 +228,9 @@ export default function NetflixDashboard() {
                         </div>
                     </section>
                 ) : (
-                    <div className="p-8 text-center text-gray-400">
-                        <p>Você ainda não tem cursos. Explore abaixo!</p>
+                    <div className="flex flex-col items-center justify-center py-16 text-center text-gray-500">
+                        <p className="text-lg font-medium mb-2">Sua jornada começa agora.</p>
+                        <p className="text-sm opacity-80">Explore o catálogo abaixo e desbloqueie seu potencial.</p>
                     </div>
                 )}
 
@@ -239,8 +240,20 @@ export default function NetflixDashboard() {
                         const catCourses = availableCourses.filter(c => c.category === cat);
                         if (catCourses.length === 0) return null;
 
-                        // Capitalize category for display
-                        const displayTitle = cat.charAt(0).toUpperCase() + cat.slice(1).replace(/_/g, ' ');
+                        // Category Translations
+                        const categoryMap: Record<string, string> = {
+                            'highlight': 'Destaques da Semana',
+                            'popular': 'Mais Populares (Em Alta)',
+                            'new_release': 'Lançamentos Recentes',
+                            'finance': 'Finanças e Investimentos',
+                            'marketing': 'Marketing Digital',
+                            'productivity': 'Produtividade e Alta Performance',
+                            'tech': 'Tecnologia e Inovação',
+                            'business': 'Negócios e Empreendedorismo'
+                        };
+
+                        // Use translation or fallback to Capitalized key
+                        const displayTitle = categoryMap[cat] || cat.charAt(0).toUpperCase() + cat.slice(1).replace(/_/g, ' ');
 
                         return (
                             <section className={styles.row} key={cat}>

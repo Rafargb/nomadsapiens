@@ -191,11 +191,10 @@ function CheckoutContent() {
                     <div className={styles.summary}>
                         <h3>Resumo do Pedido</h3>
                         <div className={styles.item}>
-                            <div className="relative w-[60px] h-[60px] rounded overflow-hidden flex-shrink-0 bg-gray-200">
+                            <div className={styles.thumbWrapper}>
                                 <img
                                     src={course.image_url || '/nomad-sapiens-logo.png'}
                                     alt={course.title}
-                                    className="w-full h-full object-cover"
                                 />
                             </div>
                             <div>
@@ -203,7 +202,7 @@ function CheckoutContent() {
                                 <p className="text-xs text-gray-500">{course.instructor || 'Nomad Sapiens'}</p>
                             </div>
                             <div className={styles.price}>
-                                R$ {course.price?.toFixed(2).replace('.', ',')}
+                                R$ {Number(course.price || 0).toFixed(2).replace('.', ',')}
                             </div>
                         </div>
 

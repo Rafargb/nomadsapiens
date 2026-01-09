@@ -228,9 +228,9 @@ export default function NetflixDashboard() {
                         </div>
                     </section>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-16 text-center text-gray-500">
-                        <p className="text-lg font-medium mb-2">Sua jornada começa agora.</p>
-                        <p className="text-sm opacity-80">Explore o catálogo abaixo e desbloqueie seu potencial.</p>
+                    <div className="flex flex-col items-start justify-center py-10 px-8 text-left border-b border-gray-800 mb-8 mx-4">
+                        <h2 className="text-2xl font-bold text-white mb-2">Sua Lista</h2>
+                        <p className="text-gray-400">Você ainda não iniciou nenhum curso. Escolha um abaixo para começar.</p>
                     </div>
                 )}
 
@@ -250,7 +250,7 @@ export default function NetflixDashboard() {
                             'productivity': 'Produtividade e Alta Performance',
                             'tech': 'Tecnologia e Inovação',
                             'business': 'Negócios e Empreendedorismo',
-                            'continue_watching': 'Continue Assistindo',
+                            'continue_watching': 'Recomendados para Você', // Renamed for non-enrolled context
                             'next_evolution': 'Sua Próxima Evolução'
                         };
 

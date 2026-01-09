@@ -135,7 +135,13 @@ export default function CheckoutPage() {
                     <div className={styles.summary}>
                         <h3>Resumo do Pedido</h3>
                         <div className={styles.item}>
-                            <div className={styles.thumb} />
+                            <div className="relative w-[60px] h-[60px] rounded overflow-hidden flex-shrink-0 bg-gray-200">
+                                <img
+                                    src="/logo.png"
+                                    alt="Capa do Curso"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
                             <div>
                                 <h4>Nômade Digital 2024</h4>
                                 <p>Rafael Barbosa</p>

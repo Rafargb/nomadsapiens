@@ -72,8 +72,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin-bottom: -150px;
-    /* Overlap with rows */
+    margin-bottom: -250px;
+    /* Overlap with rows significantly more */
 }
 
 .billboardItem {
@@ -605,6 +605,11 @@
     .modalTitle {
         font-size: 1.5rem;
     }
+
+    .emptyStateCore {
+        padding-top: 2rem;
+        /* Give some breathing room on mobile */
+    }
 }
 
 .emptyStateCore {
@@ -613,16 +618,12 @@
     align-items: flex-start;
     justify-content: center;
     padding: 0 0 2rem 4%;
-    /* Removed top padding to pull closer to buttons */
-    /* Left padding matches .row */
+    /* Zero top padding for Desktop to be close */
     text-align: left;
     margin-bottom: 2rem;
     width: 100%;
     position: relative;
     z-index: 20;
-    /* Ensure it stays above gradients */
-    margin-bottom: 2rem;
-    width: 100%;
 }
 
 .emptyStateCore h2 {

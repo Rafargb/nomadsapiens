@@ -139,7 +139,7 @@ export default function CheckoutPage() {
                                 <img
                                     src="/nomad-sapiens-logo.png"
                                     alt="Capa do Curso"
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-contain p-1"
                                 />
                             </div>
                             <div>

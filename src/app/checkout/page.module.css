@@ -158,6 +158,8 @@
 .price {
     margin-left: auto;
     font-weight: 700;
+    white-space: nowrap;
+    font-size: 1.1rem;
 }
 
 .policies {

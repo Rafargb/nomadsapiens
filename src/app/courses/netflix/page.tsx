@@ -228,9 +228,9 @@ export default function NetflixDashboard() {
                         </div>
                     </section>
                 ) : (
-                    <div className="flex flex-col items-start justify-center py-10 px-8 text-left border-b border-gray-800 mb-8 mx-4">
-                        <h2 className="text-2xl font-bold text-white mb-2">Sua Lista</h2>
-                        <p className="text-gray-400">Você ainda não iniciou nenhum curso. Escolha um abaixo para começar.</p>
+                    <div className={styles.emptyStateCore}>
+                        <h2>Sua Lista</h2>
+                        <p>Você ainda não iniciou nenhum curso. Escolha um abaixo para começar.</p>
                     </div>
                 )}
 

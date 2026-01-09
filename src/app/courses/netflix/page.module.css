@@ -538,12 +538,11 @@
         padding: 0 1rem;
         bottom: 0;
         height: auto;
-        position: absolute;
         /* Re-affirm absolute positioning for bottom alignment */
         justify-content: flex-end;
         padding-bottom: 3rem;
-        padding-top: 5rem;
-        /* Add top fade space */
+        /* Removed padding-top so Title doesn't move down */
+
         /* Enhanced Mobile Gradient: Soft top -> Solid bottom matching bg */
         background: linear-gradient(to bottom,
                 transparent 0%,
@@ -607,8 +606,8 @@
     }
 
     .emptyStateCore {
-        padding-top: 4rem;
-        /* Significantly increased spacing for mobile */
+        padding-top: 3rem;
+        /* Balanced spacing for mobile */
     }
 }
 

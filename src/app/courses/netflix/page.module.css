@@ -120,10 +120,11 @@
             rgba(20, 20, 20, 0) 0%,
             rgba(20, 20, 20, 0.05) 50%,
             /* Keep most of the image clear */
-            rgba(20, 20, 20, 0.6) 80%,
-            /* Darken near buttons */
+            rgba(20, 20, 20, 0.8) 80%,
+            /* Darker transition */
+            #141414 98%,
+            /* Safety buffer: solid slightly before end */
             #141414 100%);
-    /* Solid at the very bottom */
     z-index: 2;
     pointer-events: none;
 }

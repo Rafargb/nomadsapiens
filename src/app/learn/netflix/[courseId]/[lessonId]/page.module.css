@@ -358,3 +358,52 @@
 .nextButton:hover {
     background: #f40612;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .mainArea {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .videoSection {
+        margin-right: 0 !important;
+        /* Override inline styles */
+        flex: none;
+        overflow: visible;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        transform: none !important;
+        /* Always visible or controlled differently */
+        border-left: none;
+        border-top: 1px solid #333;
+        display: block;
+        /* Ensure it flows */
+    }
+
+    .sidebar.open {
+        /* On mobile, open just means visible below */
+        display: block;
+    }
+
+    .sidebarToggle {
+        display: none;
+        /* Hide toggle on mobile, just show list below */
+    }
+
+    .videoPlayerWrapper {
+        max-height: 50vh;
+    }
+
+    .contentContainer {
+        padding: 1.5rem;
+    }
+
+    .lessonTitle {
+        font-size: 1.5rem;
+    }
+}

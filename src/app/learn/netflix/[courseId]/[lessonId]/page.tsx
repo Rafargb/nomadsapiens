@@ -236,6 +236,20 @@ export default function NetflixLearnPage() {
                         <div className={styles.lessonHeader}>
                             <div className="flex justify-between items-start mb-2">
                                 <h1 className={styles.lessonTitle}>{currentLesson.position}. {currentLesson.title}</h1>
+                                {(() => {
+                                    const currentIndex = lessons.findIndex(l => l.id === currentLesson.id);
+                                    const nextLesson = lessons[currentIndex + 1];
+                                    if (nextLesson) {
+                                        return (
+                                            <Link href={`/learn/netflix/${courseId}/${nextLesson.id}`}>
+                                                <button className={styles.nextButton}>
+                                                    Próxima Aula <ArrowLeft size={16} style={{ transform: 'rotate(180deg)' }} />
+                                                </button>
+                                            </Link>
+                                        );
+                                    }
+                                    return null;
+                                })()}
                             </div>
                             <p className={styles.lessonDescription}>
                                 {currentLesson.description || "Sem descrição disponível."}

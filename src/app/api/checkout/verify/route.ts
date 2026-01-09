@@ -40,18 +40,32 @@ const supabase = createClient(
 
 export async function POST(request: Request) {
     try {
-        const { sessionId } = await request.json();
+        const { sessionId, paymentIntentId } = await request.json();
 
-        if (!sessionId) {
-            return NextResponse.json({ error: 'Missing session ID' }, { status: 400 });
+        if (!sessionId && !paymentIntentId) {
+            return NextResponse.json({ error: 'Missing session ID or PaymentIntent ID' }, { status: 400 });
         }
 
-        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        let isPaid = false;
+        let userId, courseId;
 
-        if (session.payment_status === 'paid') {
-            const userId = session.metadata?.userId;
-            const courseId = session.metadata?.courseId;
+        if (paymentIntentId) {
+            const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+            if (paymentIntent.status === 'succeeded') {
+                isPaid = true;
+                userId = paymentIntent.metadata?.userId;
+                courseId = paymentIntent.metadata?.courseId;
+            }
+        } else if (sessionId) {
+            const session = await stripe.checkout.sessions.retrieve(sessionId);
+            if (session.payment_status === 'paid') {
+                isPaid = true;
+                userId = session.metadata?.userId;
+                courseId = session.metadata?.courseId;
+            }
+        }
 
+        if (isPaid) {
             return NextResponse.json({
                 success: true,
                 userId,

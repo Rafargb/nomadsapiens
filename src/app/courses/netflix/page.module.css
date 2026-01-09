@@ -607,8 +607,8 @@
     }
 
     .emptyStateCore {
-        padding-top: 2rem;
-        /* Give some breathing room on mobile */
+        padding-top: 4rem;
+        /* Significantly increased spacing for mobile */
     }
 }
 

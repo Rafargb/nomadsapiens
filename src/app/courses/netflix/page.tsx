@@ -227,12 +227,7 @@ export default function NetflixDashboard() {
                             ))}
                         </div>
                     </section>
-                ) : (
-                    <div className={styles.emptyStateCore}>
-                        <h2>Sua Lista</h2>
-                        <p>Você ainda não iniciou nenhum curso. Escolha um abaixo para começar.</p>
-                    </div>
-                )}
+                ) : null}
 
                 {/* 2. MARKETPLACE (Locked/Available) - Grouped by Category */}
                 {categories.length > 0 ? (

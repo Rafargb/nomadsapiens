@@ -167,20 +167,27 @@ function CheckoutContent() {
                         {/* Custom visual tabs were replaced by Stripe's internal tabs for better security/handling */}
                         {/* But the layout structure is now preserved (White Card + Sidebar) */}
 
-                        {clientSecret ? (
-                            <Elements stripe={stripePromise} options={{
-                                clientSecret,
-                                appearance: {
-                                    theme: 'stripe',
-                                    variables: { colorPrimary: '#5022c3' }
-                                }
-                            }}>
-                                <CheckoutForm price={course.price} clientSecret={clientSecret} />
-                            </Elements>
+                        {/* Check if price is valid > 0 */}
+                        {course.price && course.price > 0 ? (
+                            clientSecret ? (
+                                <Elements stripe={stripePromise} options={{
+                                    clientSecret,
+                                    appearance: {
+                                        theme: 'stripe',
+                                        variables: { colorPrimary: '#5022c3' }
+                                    }
+                                }}>
+                                    <CheckoutForm price={course.price} clientSecret={clientSecret} />
+                                </Elements>
+                            ) : (
+                                <div className="p-8 text-center text-gray-500">
+                                    <Loader2 className="animate-spin mx-auto mb-2" />
+                                    Preparando pagamento...
+                                </div>
+                            )
                         ) : (
                             <div className="p-8 text-center text-gray-500">
-                                <Loader2 className="animate-spin mx-auto mb-2" />
-                                Preparando pagamento...
+                                <p>Este produto não está disponível para compra online no momento.</p>
                             </div>
                         )}
                     </Card>

@@ -1,31 +1,46 @@
 "use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
-import { Lock, CreditCard, CheckCircle } from 'lucide-react';
+import { Lock, Shield, CheckCircle } from 'lucide-react';
 import styles from './page.module.css';
 
+// Stripe Imports
+import { loadStripe } from '@stripe/stripe-js';
+import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js';
+
+// Init Stripe outside component
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
 export default function CheckoutPage() {
-    const [success, setSuccess] = useState(false);
+    const [clientSecret, setClientSecret] = useState<string | null>(null);
 
-    const handlePayment = () => {
-        // Mock payment processing
-        setSuccess(true);
-    };
-
-    if (success) {
-        return (
-            <div className={styles.successContainer}>
-                <CheckCircle size={64} color="#16a34a" />
-                <h1>Pagamento Confirmado!</h1>
-                <p>Você já pode acessar seu curso.</p>
-                <Button onClick={() => window.location.href = '/learn/1/1'}>
-                    Começar a Aprender
-                </Button>
-            </div>
-        );
-    }
+    useEffect(() => {
+        // Fetch Client Secret for the default course (MOCKED ID for now)
+        async function initCheckout() {
+            try {
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        courseId: 1, // Default Course
+                        courseTitle: 'Nômade Digital 2024',
+                        price: 49.90,
+                        userId: 'guest-user', // Should be real user
+                        userEmail: 'guest@example.com', // Should be real
+                        origin: window.location.origin,
+                    }),
+                });
+                const data = await response.json();
+                if (data.clientSecret) {
+                    setClientSecret(data.clientSecret);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        initCheckout();
+    }, []);
 
     return (
         <div className={styles.container}>
@@ -37,49 +52,21 @@ export default function CheckoutPage() {
             </header>
 
             <div className={styles.grid}>
-                {/* Payment Form */}
+                {/* Payment Form Area (Replaced by Stripe) */}
                 <div className={styles.formColumn}>
                     <Card className={styles.card}>
-                        <h3>Método de Pagamento</h3>
-
-                        <div className={styles.tabs}>
-                            <div className={`${styles.tab} ${styles.activeTab}`}>
-                                <CreditCard size={20} /> Cartão de Crédito
+                        {clientSecret ? (
+                            <EmbeddedCheckoutProvider
+                                stripe={stripePromise}
+                                options={{ clientSecret }}
+                            >
+                                <EmbeddedCheckout />
+                            </EmbeddedCheckoutProvider>
+                        ) : (
+                            <div className="p-8 text-center text-gray-500">
+                                Carregando pagamentos...
                             </div>
-                            <div className={styles.tab}>
-                                <span>PIX</span>
-                            </div>
-                        </div>
-
-                        <form className={styles.form}>
-                            <div className={styles.inputGroup}>
-                                <label>Nome no Cartão</label>
-                                <input type="text" placeholder="Nome como aparece no cartão" className={styles.input} />
-                            </div>
-                            <div className={styles.inputGroup}>
-                                <label>Número do Cartão</label>
-                                <input type="text" placeholder="0000 0000 0000 0000" className={styles.input} />
-                            </div>
-                            <div className={styles.row}>
-                                <div className={styles.inputGroup}>
-                                    <label>Validade</label>
-                                    <input type="text" placeholder="MM/AA" className={styles.input} />
-                                </div>
-                                <div className={styles.inputGroup}>
-                                    <label>CVC</label>
-                                    <input type="text" placeholder="123" className={styles.input} />
-                                </div>
-                            </div>
-
-                            <div className={styles.totalRow}>
-                                <span>Total:</span>
-                                <span className={styles.totalPrice}>R$ 49,90</span>
-                            </div>
-
-                            <Button fullWidth onClick={handlePayment} type="button">
-                                Finalizar Pagamento
-                            </Button>
-                        </form>
+                        )}
                     </Card>
                 </div>
 
@@ -106,3 +93,4 @@ export default function CheckoutPage() {
         </div>
     );
 }
+

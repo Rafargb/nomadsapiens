@@ -77,7 +77,7 @@ export default function CourseDetailPage() {
 
                             <div className={styles.actions}>
                                 <Button fullWidth size="lg">Adicionar ao Carrinho</Button>
-                                <Link href="/checkout" style={{ width: '100%' }}>
+                                <Link href={`/checkout?courseId=${params.id}`} style={{ width: '100%' }}>
                                     <Button fullWidth variant="secondary" size="lg">Comprar Agora</Button>
                                 </Link>
                             </div>

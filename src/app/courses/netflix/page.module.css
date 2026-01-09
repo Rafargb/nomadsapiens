@@ -72,8 +72,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin-bottom: 0;
-    /* No overlap, content flows after billboard */
+    margin-bottom: -100px;
+    /* Gentle overlap to merge "Sua Lista" into the black fade */
 }
 
 .billboardItem {

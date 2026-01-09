@@ -72,8 +72,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin-bottom: -250px;
-    /* Overlap with rows significantly more */
+    margin-bottom: 0;
+    /* No overlap, content flows after billboard */
 }
 
 .billboardItem {

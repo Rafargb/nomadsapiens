@@ -21,71 +21,104 @@ interface Course {
 
 export default function NetflixDashboard() {
     const [scrolled, setScrolled] = useState(false);
-
-    // Auth State (Moved to top)
     const [user, setUser] = useState<any>(null);
     const isAdmin = user?.email === 'rafaelbarbosa85rd@gmail.com' || user?.email?.includes('admin');
 
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user));
-    }, []);
     const [heroIndex, setHeroIndex] = useState(0);
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
     const [showModal, setShowModal] = useState(false);
 
     // Data State
-    const [courses, setCourses] = useState<Course[]>([]);
+    const [allCourses, setAllCourses] = useState<Course[]>([]);
+    const [myCourses, setMyCourses] = useState<Course[]>([]);
+    const [availableCourses, setAvailableCourses] = useState<Course[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // Filtered Lists
-    const highlights = courses.filter(c => c.category === 'highlight');
-    const myCourses = courses.filter(c => c.category === 'continue_watching');
-    const funnel = courses.filter(c => c.category === 'next_evolution');
-    const popular = courses.filter(c => c.category === 'popular');
-
-    // Fetch Data from Supabase
+    // Fetch Data
     useEffect(() => {
-        async function fetchCourses() {
+        async function loadData() {
             try {
-                const { data, error } = await supabase.from('courses').select('*').order('id');
-                if (error) {
-                    console.error('Error fetching courses:', error);
-                } else if (data) {
-                    setCourses(data);
+                // 1. Get Session
+                const { data: { session } } = await supabase.auth.getSession();
+                const currentUser = session?.user;
+                setUser(currentUser);
+
+                // 2. Fetch All Courses
+                const { data: coursesData, error: coursesError } = await supabase
+                    .from('courses')
+                    .select('*')
+                    .order('id');
+
+                if (coursesError) throw coursesError;
+
+                // 3. Fetch Enrollments
+                let enrolledCourseIds: number[] = [];
+                if (currentUser) {
+                    const { data: enrollments } = await supabase
+                        .from('enrollments')
+                        .select('course_id')
+                        .eq('user_id', currentUser.id);
+
+                    if (enrollments) {
+                        enrolledCourseIds = enrollments.map(e => e.course_id);
+                    }
                 }
+
+                // 4. Separate Lists
+                const my: Course[] = [];
+                const others: Course[] = [];
+
+                if (coursesData) {
+                    coursesData.forEach(course => {
+                        if (enrolledCourseIds.includes(course.id)) {
+                            // User owns this course
+                            my.push({ ...course, is_locked: false }); // Force unlock in UI
+                        } else {
+                            // User does not own this course
+                            others.push(course);
+                        }
+                    });
+                }
+
+                setAllCourses(coursesData || []);
+                setMyCourses(my);
+                setAvailableCourses(others);
+
             } catch (err) {
-                console.error('Unexpected error:', err);
+                console.error("Error loading dashboard:", err);
             } finally {
                 setLoading(false);
             }
         }
-        fetchCourses();
 
-        // Navbar scroll handler
+        loadData();
+
         const handleScroll = () => setScrolled(window.scrollY > 50);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Billboard Rotation
+    // Billboard Rotation (Cycle through available/highlight courses)
+    const billboardCourses = availableCourses.length > 0 ? availableCourses : myCourses;
     useEffect(() => {
-        if (highlights.length === 0) return;
+        if (billboardCourses.length === 0) return;
         const interval = setInterval(() => {
             if (!showModal) {
-                setHeroIndex((prev) => (prev + 1) % highlights.length);
+                setHeroIndex((prev) => (prev + 1) % billboardCourses.length);
             }
         }, 8000);
         return () => clearInterval(interval);
-    }, [showModal, highlights]);
+    }, [showModal, billboardCourses]);
 
     if (loading) {
         return <div className={styles.container} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
             <h1 style={{ marginBottom: '1rem' }}>Carregando Nomad Sapiens...</h1>
-            <p style={{ color: '#666' }}>Conectando ao banco de dados...</p>
+            <p style={{ color: '#666' }}>Personalizando sua experiência...</p>
         </div>;
     }
 
-
+    // Helper to group available courses by category (or just show all if few)
+    const categories = Array.from(new Set(availableCourses.map(c => c.category))).filter(Boolean);
 
     return (
         <div className={styles.container}>
@@ -104,9 +137,8 @@ export default function NetflixDashboard() {
                     </Link>
                     <div className={styles.navLinks}>
                         <Link href="/" className={`${styles.navLink} ${styles.active}`}>Início</Link>
-                        <a href="#" className={styles.navLink}>Séries</a>
-                        <a href="#" className={styles.navLink}>Bombando</a>
                         <a href="#" className={styles.navLink}>Minha Lista</a>
+                        <a href="#" className={styles.navLink}>Explorar</a>
                     </div>
                 </div>
 
@@ -123,14 +155,13 @@ export default function NetflixDashboard() {
             </nav>
 
             {/* Billboard / Hero */}
-            {highlights.length > 0 && (
+            {billboardCourses.length > 0 && (
                 <div className={styles.billboard}>
-                    {highlights.map((item, index) => (
+                    {billboardCourses.map((item, index) => (
                         <div
                             key={item.id}
                             className={`${styles.billboardItem} ${index === heroIndex ? styles.active : ''}`}
                         >
-                            {/* Using explicit img tag or next/image with full URL */}
                             <img
                                 src={item.image_url}
                                 className={styles.billboardBg}
@@ -144,9 +175,9 @@ export default function NetflixDashboard() {
                                 </p>
                                 <div className={styles.billboardActions}>
                                     {!item.is_locked ? (
-                                        <Link href="/learn/netflix/1/101">
+                                        <Link href={`/learn/netflix/${item.id}/1`}>
                                             <button className={styles.playButton}>
-                                                <Play fill="black" size={24} /> Assistir
+                                                <Play fill="black" size={24} /> Continuar
                                             </button>
                                         </Link>
                                     ) : (
@@ -154,7 +185,7 @@ export default function NetflixDashboard() {
                                             className={styles.playButton}
                                             onClick={() => { setSelectedCourse(item); setShowModal(true); }}
                                         >
-                                            <Play fill="black" size={24} /> Desbloquear
+                                            <Play fill="black" size={24} /> Conhecer
                                         </button>
                                     )}
                                     <button
@@ -173,98 +204,98 @@ export default function NetflixDashboard() {
             {/* Rows Container */}
             <div className={styles.rowsContainer}>
 
-                {/* Meus Cursos (Unlocked) */}
-                {myCourses.length > 0 && (
+                {/* 1. MY COURSES (Unlocked) */}
+                {myCourses.length > 0 ? (
                     <section className={styles.row}>
-                        <h2 className={styles.rowTitle}>Continuar Assistindo</h2>
+                        <h2 className={styles.rowTitle}>Minha Lista (Meus Cursos)</h2>
                         <div className={styles.slider}>
                             {myCourses.map(course => (
-                                <Link href={`/learn/netflix/${course.id}/101`} key={course.id}>
+                                <Link href={`/learn/netflix/${course.id}/1`} key={course.id}>
                                     <div className={styles.continueCardWrapper}>
                                         <div className={styles.continueCardInner}>
                                             <img src={course.image_url} className={styles.cardImage} alt={course.title} />
-
                                             {/* Cinematic Title Overlay */}
                                             <div className={styles.continueTitle}>
                                                 {course.title}
                                             </div>
-
-                                            {(course.progress || 0) > 0 && (
-                                                <div className={styles.progressBar}>
-                                                    <div className={styles.progressFill} style={{ width: `${course.progress}%` }}></div>
-                                                </div>
-                                            )}
+                                            <div className={styles.progressBar}>
+                                                <div className={styles.progressFill} style={{ width: '0%' }}></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </Link>
                             ))}
                         </div>
                     </section>
-                )}
-
-                {/* Funnel (Locked) */}
-                {funnel.length > 0 && (
-                    <section className={styles.row}>
-                        <h2 className={styles.rowTitle}>Sua Próxima Evolução</h2>
-                        <div className={styles.slider}>
-                            {funnel.map(course => (
-                                <div className={styles.cardWrapper} key={course.id} onClick={() => { setSelectedCourse(course); setShowModal(true); }}>
-                                    <div className={styles.cardInner}>
-                                        <img src={course.image_url} className={`${styles.cardImage} ${course.is_locked ? styles.locked : ''}`} alt={course.title} />
-                                        {course.is_locked && (
-                                            <div className={styles.lockOverlay}>
-                                                <div className={styles.lockIcon}>
-                                                    <Lock size={24} />
-                                                </div>
-                                            </div>
-                                        )}
-                                        <div className={styles.cardContent}>
-                                            <div className={styles.cardTitle}>{course.title}</div>
-                                            <div className={styles.cardMeta}>Bloqueado</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                {/* Recommendations (Locked) */}
-                {popular.length > 0 && (
-                    <section className={styles.row}>
-                        <h2 className={styles.rowTitle}>Populares na Nomad</h2>
-                        <div className={styles.slider}>
-                            {popular.map(course => (
-                                <div className={styles.cardWrapper} key={`rec-${course.id}`} onClick={() => { setSelectedCourse(course); setShowModal(true); }}>
-                                    <div className={styles.cardInner}>
-                                        <img src={course.image_url} className={`${styles.cardImage} ${course.is_locked ? styles.locked : ''}`} alt={course.title} />
-                                        {course.is_locked && (
-                                            <div className={styles.lockOverlay}>
-                                                <div className={styles.lockIcon}>
-                                                    <Lock size={24} />
-                                                </div>
-                                            </div>
-                                        )}
-                                        <div className={styles.cardContent}>
-                                            <div className={styles.cardTitle}>{course.title}</div>
-                                            <div className={styles.cardMeta}>{course.match_score || '90%'} Relevante</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                {courses.length === 0 && !loading && (
-                    <div style={{ padding: '4rem', textAlign: 'center' }}>
-                        <h2>Nenhum curso encontrado.</h2>
-                        <p>Verifique se você rodou o script SQL no Supabase.</p>
+                ) : (
+                    <div className="p-8 text-center text-gray-400">
+                        <p>Você ainda não tem cursos. Explore abaixo!</p>
                     </div>
                 )}
 
+                {/* 2. MARKETPLACE (Locked/Available) - Grouped by Category */}
+                {categories.length > 0 ? (
+                    categories.map(cat => {
+                        const catCourses = availableCourses.filter(c => c.category === cat);
+                        if (catCourses.length === 0) return null;
+
+                        // Capitalize category for display
+                        const displayTitle = cat.charAt(0).toUpperCase() + cat.slice(1).replace(/_/g, ' ');
+
+                        return (
+                            <section className={styles.row} key={cat}>
+                                <h2 className={styles.rowTitle}>{displayTitle}</h2>
+                                <div className={styles.slider}>
+                                    {catCourses.map(course => (
+                                        <div className={styles.cardWrapper} key={course.id} onClick={() => { setSelectedCourse(course); setShowModal(true); }}>
+                                            <div className={styles.cardInner}>
+                                                <img src={course.image_url} className={`${styles.cardImage} ${styles.locked}`} alt={course.title} />
+                                                <div className={styles.lockOverlay}>
+                                                    <div className={styles.lockIcon}>
+                                                        <Lock size={24} />
+                                                    </div>
+                                                </div>
+                                                <div className={styles.cardContent}>
+                                                    <div className={styles.cardTitle}>{course.title}</div>
+                                                    <div className={styles.cardMeta}>Disponível</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        );
+                    })
+                ) : (
+                    // Fallback if no categories or all courses owned
+                    availableCourses.length > 0 && (
+                        <section className={styles.row}>
+                            <h2 className={styles.rowTitle}>Explorar Novos Horizontes</h2>
+                            <div className={styles.slider}>
+                                {availableCourses.map(course => (
+                                    <div className={styles.cardWrapper} key={course.id} onClick={() => { setSelectedCourse(course); setShowModal(true); }}>
+                                        <div className={styles.cardInner}>
+                                            <img src={course.image_url} className={`${styles.cardImage} ${styles.locked}`} alt={course.title} />
+                                            <div className={styles.lockOverlay}>
+                                                <div className={styles.lockIcon}>
+                                                    <Lock size={24} />
+                                                </div>
+                                            </div>
+                                            <div className={styles.cardContent}>
+                                                <div className={styles.cardTitle}>{course.title}</div>
+                                                <div className={styles.cardMeta}>Disponível</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )
+                )}
+
             </div>
-            {/* Modal */}
+
+            {/* Modal Details */}
             {showModal && selectedCourse && (
                 <div className={styles.modalOverlay} onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
                     <div className={styles.modalContent}>
@@ -284,21 +315,20 @@ export default function NetflixDashboard() {
                                 {selectedCourse.sales_copy || selectedCourse.description}
                             </p>
 
-                            {selectedCourse.is_locked ? (
-                                <Link href="#" className={styles.unlockButton}>
-                                    Desbloquear Acesso Especial
-                                </Link>
-                            ) : (
-                                <Link href="/learn/netflix/1/101" className={styles.unlockButton} style={{ background: '#fff', color: '#000' }}>
+                            {!selectedCourse.is_locked ? (
+                                <Link href={`/learn/netflix/${selectedCourse.id}/1`} className={styles.unlockButton} style={{ background: '#fff', color: '#000' }}>
                                     <Play fill="black" size={20} style={{ display: 'inline', marginRight: '8px' }} />
                                     Continuar Assistindo
+                                </Link>
+                            ) : (
+                                <Link href={`/checkout?courseId=${selectedCourse.id}`} className={styles.unlockButton}>
+                                    Adquirir Acesso (Via Checkout)
                                 </Link>
                             )}
                         </div>
                     </div>
                 </div>
             )}
-
         </div>
     );
 }

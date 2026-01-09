@@ -17,32 +17,30 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        const session = await stripe.checkout.sessions.create({
-            mode: 'payment',
-            payment_method_types: ['card', 'pix'],
-            customer_email: userEmail,
-            line_items: [
-                {
-                    price_data: {
-                        currency: 'brl',
-                        product_data: {
-                            name: courseTitle,
-                            images: ['https://nomadsapiens.com/logo.png'],
-                        },
-                        unit_amount: Math.round(price * 100),
-                    },
-                    quantity: 1,
-                },
-            ],
-            ui_mode: 'embedded', // Embedded Checkout
-            return_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+        // Create a PaymentIntent instead of a Session
+        // 1. Find or create customer
+        // Note: For MVP we might skip customer searching to avoid complexity, but it's good practice.
+        // Let's just create an intent. Guest customers are fine for PaymentIntents.
+
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: Math.round(price * 100),
+            currency: 'brl',
+            automatic_payment_methods: {
+                enabled: true,
+            },
             metadata: {
                 userId: userId,
                 courseId: courseId.toString(),
+                userEmail: userEmail,
             },
-        } as any);
+            description: `Course: ${courseTitle}`,
+            // receipt_email: userEmail, // Optional
+        });
 
-        return NextResponse.json({ clientSecret: session.client_secret });
+        return NextResponse.json({
+            clientSecret: paymentIntent.client_secret,
+            dpmCheckerLink: `https://dashboard.stripe.com/settings/payment_methods/review?transaction_id=${paymentIntent.id}`,
+        });
     } catch (error: any) {
         console.error('Stripe error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });

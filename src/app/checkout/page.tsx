@@ -2,35 +2,87 @@
 
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
-import { Lock, Shield, CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Lock, Shield, CheckCircle, CreditCard } from 'lucide-react';
 import styles from './page.module.css';
-
-// Stripe Imports
 import { loadStripe } from '@stripe/stripe-js';
-import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
-// Init Stripe outside component
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
+function CheckoutForm({ price, clientSecret }: { price: number, clientSecret: string }) {
+    const stripe = useStripe();
+    const elements = useElements();
+
+    const [message, setMessage] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!stripe || !elements) {
+            return;
+        }
+
+        setIsLoading(true);
+
+        const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                // Return URL where the user is redirected after the payment
+                return_url: `${window.location.origin}/checkout/success`,
+            },
+        });
+
+        if (error.type === "card_error" || error.type === "validation_error") {
+            setMessage(error.message ?? "Ocorreu um erro desconhecido.");
+        } else {
+            setMessage("Ocorreu um erro inesperado.");
+        }
+
+        setIsLoading(false);
+    };
+
+    return (
+        <form className={styles.form} onSubmit={handleSubmit}>
+            {/* We use Stripe's PaymentElement which handles tabs for Card/Pix internally and elegantly */}
+            <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
+
+            {message && <div id="payment-message" className="text-red-500 text-sm mt-2">{message}</div>}
+
+            <Button fullWidth type="submit" disabled={isLoading || !stripe || !elements}>
+                {isLoading ? "Processando..." : `Pagar R$ ${price.toFixed(2).replace('.', ',')}`}
+            </Button>
+
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-500 mt-4">
+                <Lock size={12} /> Pagamento 100% Seguro via Stripe
+            </div>
+        </form>
+    );
+}
 
 export default function CheckoutPage() {
     const [clientSecret, setClientSecret] = useState<string | null>(null);
+    const coursePrice = 49.90;
 
     useEffect(() => {
-        // Fetch Client Secret for the default course (MOCKED ID for now)
         async function initCheckout() {
             try {
                 const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        courseId: 1, // Default Course
+                        courseId: 1,
                         courseTitle: 'Nômade Digital 2024',
-                        price: 49.90,
-                        userId: 'guest-user', // Should be real user
-                        userEmail: 'guest@example.com', // Should be real
+                        price: coursePrice,
+                        userId: 'guest-user',
+                        userEmail: 'guest@example.com',
                         origin: window.location.origin,
                     }),
                 });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 if (data.clientSecret) {
                     setClientSecret(data.clientSecret);
@@ -52,25 +104,33 @@ export default function CheckoutPage() {
             </header>
 
             <div className={styles.grid}>
-                {/* Payment Form Area (Replaced by Stripe) */}
+                {/* Payment Form Column */}
                 <div className={styles.formColumn}>
                     <Card className={styles.card}>
+                        <h3 className="mb-6 text-lg font-semibold">Método de Pagamento</h3>
+
+                        {/* Custom visual tabs were replaced by Stripe's internal tabs for better security/handling */}
+                        {/* But the layout structure is now preserved (White Card + Sidebar) */}
+
                         {clientSecret ? (
-                            <EmbeddedCheckoutProvider
-                                stripe={stripePromise}
-                                options={{ clientSecret }}
-                            >
-                                <EmbeddedCheckout />
-                            </EmbeddedCheckoutProvider>
+                            <Elements stripe={stripePromise} options={{
+                                clientSecret,
+                                appearance: {
+                                    theme: 'stripe',
+                                    variables: { colorPrimary: '#5022c3' }
+                                }
+                            }}>
+                                <CheckoutForm price={coursePrice} clientSecret={clientSecret} />
+                            </Elements>
                         ) : (
                             <div className="p-8 text-center text-gray-500">
-                                Carregando pagamentos...
+                                Carregando formulário seguro...
                             </div>
                         )}
                     </Card>
                 </div>
 
-                {/* Order Summary */}
+                {/* Order Summary Column */}
                 <div className={styles.summaryColumn}>
                     <div className={styles.summary}>
                         <h3>Resumo do Pedido</h3>
@@ -80,7 +140,7 @@ export default function CheckoutPage() {
                                 <h4>Nômade Digital 2024</h4>
                                 <p>Rafael Barbosa</p>
                             </div>
-                            <div className={styles.price}>R$ 49,90</div>
+                            <div className={styles.price}>R$ {coursePrice.toFixed(2).replace('.', ',')}</div>
                         </div>
 
                         <div className={styles.policies}>

@@ -159,74 +159,76 @@ function CheckoutContent() {
     if (!course) return <div>Curso não encontrado.</div>;
 
     return (
-        <div className={styles.container}>
-            <header className={styles.header}>
-                <h2>Checkout Seguro</h2>
-                <div className={styles.secureBadge}>
-                    <Lock size={14} /> 256-bit SSL Encrypted
-                </div>
-            </header>
+        <div className={styles.wrapper}>
+            <div className={styles.container}>
+                <header className={styles.header}>
+                    <h2>Checkout Seguro</h2>
+                    <div className={styles.secureBadge}>
+                        <Lock size={14} /> 256-bit SSL Encrypted
+                    </div>
+                </header>
 
-            <div className={styles.grid}>
-                {/* Order Summary Column */}
-                <div className={styles.summaryColumn}>
-                    <div className={styles.summary}>
-                        <h3>Resumo do Pedido</h3>
-                        <div className={styles.item}>
-                            <div className={styles.thumbWrapper}>
-                                <img
-                                    src={course.image_url || '/nomad-sapiens-logo.png'}
-                                    alt={course.title}
-                                />
+                <div className={styles.grid}>
+                    {/* Order Summary Column */}
+                    <div className={styles.summaryColumn}>
+                        <div className={styles.summary}>
+                            <h3>Resumo do Pedido</h3>
+                            <div className={styles.item}>
+                                <div className={styles.thumbWrapper}>
+                                    <img
+                                        src={course.image_url || '/nomad-sapiens-logo.png'}
+                                        alt={course.title}
+                                    />
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-sm line-clamp-2">{course.title}</h4>
+                                    <p className="text-xs text-gray-500">{course.instructor || 'Nomad Sapiens'}</p>
+                                </div>
+                                <div className={styles.price}>
+                                    R$ {Number(course.price || 0).toFixed(2).replace('.', ',')}
+                                </div>
                             </div>
-                            <div>
-                                <h4 className="font-semibold text-sm line-clamp-2">{course.title}</h4>
-                                <p className="text-xs text-gray-500">{course.instructor || 'Nomad Sapiens'}</p>
-                            </div>
-                            <div className={styles.price}>
-                                R$ {Number(course.price || 0).toFixed(2).replace('.', ',')}
-                            </div>
-                        </div>
 
-                        <div className={styles.policies}>
-                            <p>Ao completar sua compra você concorda com nossos Termos de Serviço.</p>
-                            <p>Garantia de 30 dias.</p>
+                            <div className={styles.policies}>
+                                <p>Ao completar sua compra você concorda com nossos Termos de Serviço.</p>
+                                <p>Garantia de 30 dias.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Payment Form Column */}
-                <div className={styles.formColumn}>
-                    <Card className={styles.card}>
-                        <h3 className="mb-6 text-lg font-semibold">Método de Pagamento</h3>
+                    {/* Payment Form Column */}
+                    <div className={styles.formColumn}>
+                        <Card className={styles.card}>
+                            <h3 className="mb-6 text-lg font-semibold">Método de Pagamento</h3>
 
-                        {/* Custom visual tabs were replaced by Stripe's internal tabs for better security/handling */}
-                        {/* But the layout structure is now preserved (White Card + Sidebar) */}
+                            {/* Custom visual tabs were replaced by Stripe's internal tabs for better security/handling */}
+                            {/* But the layout structure is now preserved (White Card + Sidebar) */}
 
-                        {/* Check if price is valid > 0 */}
-                        {course.price && course.price > 0 ? (
-                            clientSecret ? (
-                                <Elements stripe={stripePromise} options={{
-                                    clientSecret,
-                                    appearance: {
-                                        theme: 'stripe',
-                                        variables: { colorPrimary: '#5022c3' }
-                                    }
-                                }}>
-                                    <CheckoutForm price={course.price} clientSecret={clientSecret} />
-                                </Elements>
+                            {/* Check if price is valid > 0 */}
+                            {course.price && course.price > 0 ? (
+                                clientSecret ? (
+                                    <Elements stripe={stripePromise} options={{
+                                        clientSecret,
+                                        appearance: {
+                                            theme: 'stripe',
+                                            variables: { colorPrimary: '#5022c3' }
+                                        }
+                                    }}>
+                                        <CheckoutForm price={course.price} clientSecret={clientSecret} />
+                                    </Elements>
+                                ) : (
+                                    <div className="p-8 text-center text-gray-500">
+                                        <Loader2 className="animate-spin mx-auto mb-2" />
+                                        Preparando pagamento...
+                                    </div>
+                                )
                             ) : (
                                 <div className="p-8 text-center text-gray-500">
-                                    <Loader2 className="animate-spin mx-auto mb-2" />
-                                    Preparando pagamento...
+                                    <p>Este produto não está disponível para compra online no momento.</p>
                                 </div>
-                            )
-                        ) : (
-                            <div className="p-8 text-center text-gray-500">
-                                <p>Este produto não está disponível para compra online no momento.</p>
-                            </div>
-                        )}
-                    </Card>
+                            )}
+                        </Card>
+                    </div>
                 </div>
             </div>
         </div>

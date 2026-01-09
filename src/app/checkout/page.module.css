@@ -1,8 +1,15 @@
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
+.wrapper {
+    min-height: 100vh;
+    background-color: #f3f4f6;
+    /* Soft gray background */
+    display: flex;
+    justify-content: center;
     padding: 2rem 1rem;
-    overflow-x: hidden;
+}
+
+.container {
+    width: 100%;
+    max-width: 1100px;
 }
 
 .header {
@@ -10,8 +17,9 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+    border-bottom: none;
+    /* Cleaner header */
 }
 
 .secureBadge {
@@ -51,9 +59,11 @@
 }
 
 .card {
-    padding: 2rem;
+    padding: 2.5rem;
     background: #fff;
-    /* Ensure white */
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .tabs {

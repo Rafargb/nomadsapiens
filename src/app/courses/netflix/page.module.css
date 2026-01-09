@@ -612,10 +612,15 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    padding: 2.5rem 0 2.5rem 4%;
+    padding: 0 0 2rem 4%;
+    /* Removed top padding to pull closer to buttons */
     /* Left padding matches .row */
     text-align: left;
-    border-bottom: 1px solid #333;
+    margin-bottom: 2rem;
+    width: 100%;
+    position: relative;
+    z-index: 20;
+    /* Ensure it stays above gradients */
     margin-bottom: 2rem;
     width: 100%;
 }

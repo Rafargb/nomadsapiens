@@ -159,6 +159,33 @@ function CheckoutContent() {
             </header>
 
             <div className={styles.grid}>
+                {/* Order Summary Column */}
+                <div className={styles.summaryColumn}>
+                    <div className={styles.summary}>
+                        <h3>Resumo do Pedido</h3>
+                        <div className={styles.item}>
+                            <div className={styles.thumbWrapper}>
+                                <img
+                                    src={course.image_url || '/nomad-sapiens-logo.png'}
+                                    alt={course.title}
+                                />
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-sm line-clamp-2">{course.title}</h4>
+                                <p className="text-xs text-gray-500">{course.instructor || 'Nomad Sapiens'}</p>
+                            </div>
+                            <div className={styles.price}>
+                                R$ {Number(course.price || 0).toFixed(2).replace('.', ',')}
+                            </div>
+                        </div>
+
+                        <div className={styles.policies}>
+                            <p>Ao completar sua compra você concorda com nossos Termos de Serviço.</p>
+                            <p>Garantia de 30 dias.</p>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Payment Form Column */}
                 <div className={styles.formColumn}>
                     <Card className={styles.card}>
@@ -191,33 +218,6 @@ function CheckoutContent() {
                             </div>
                         )}
                     </Card>
-                </div>
-
-                {/* Order Summary Column */}
-                <div className={styles.summaryColumn}>
-                    <div className={styles.summary}>
-                        <h3>Resumo do Pedido</h3>
-                        <div className={styles.item}>
-                            <div className={styles.thumbWrapper}>
-                                <img
-                                    src={course.image_url || '/nomad-sapiens-logo.png'}
-                                    alt={course.title}
-                                />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-sm line-clamp-2">{course.title}</h4>
-                                <p className="text-xs text-gray-500">{course.instructor || 'Nomad Sapiens'}</p>
-                            </div>
-                            <div className={styles.price}>
-                                R$ {Number(course.price || 0).toFixed(2).replace('.', ',')}
-                            </div>
-                        </div>
-
-                        <div className={styles.policies}>
-                            <p>Ao completar sua compra você concorda com nossos Termos de Serviço.</p>
-                            <p>Garantia de 30 dias.</p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

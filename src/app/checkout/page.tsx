@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Lock, Shield, CheckCircle, CreditCard } from 'lucide-react';
+import { Lock, Shield, CheckCircle, CreditCard, Loader2 } from 'lucide-react';
 import styles from './page.module.css';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { supabase } from '@/lib/supabaseClient';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -61,21 +63,64 @@ function CheckoutForm({ price, clientSecret }: { price: number, clientSecret: st
     );
 }
 
-export default function CheckoutPage() {
-    const [clientSecret, setClientSecret] = useState<string | null>(null);
-    const coursePrice = 49.90;
+function CheckoutContent() {
+    const searchParams = useSearchParams();
+    const courseIdParam = searchParams.get('courseId');
 
+    const [course, setCourse] = useState<any>(null);
+    const [loadingCourse, setLoadingCourse] = useState(true);
+    const [clientSecret, setClientSecret] = useState<string | null>(null);
+
+    // 1. Fetch Course Data
     useEffect(() => {
+        async function fetchCourse() {
+            setLoadingCourse(true);
+            try {
+                // If no ID provided, default to 1 (or handle error)
+                const idToFetch = courseIdParam || '1';
+
+                const { data, error } = await supabase
+                    .from('courses')
+                    .select('*')
+                    .eq('id', idToFetch)
+                    .single();
+
+                if (error) {
+                    console.error('Error fetching course:', error);
+                    // Fallback to static data if DB fail
+                    setCourse({
+                        id: 1,
+                        title: 'Nômade Digital 2024',
+                        instructor: 'Rafael Barbosa',
+                        price: 49.90,
+                        image_url: '/nomad-sapiens-logo.png'
+                    });
+                } else if (data) {
+                    setCourse(data);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoadingCourse(false);
+            }
+        }
+        fetchCourse();
+    }, [courseIdParam]);
+
+    // 2. Init Checkout only AFTER we have the course
+    useEffect(() => {
+        if (!course) return;
+
         async function initCheckout() {
             try {
                 const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        courseId: 1,
-                        courseTitle: 'Nômade Digital 2024',
-                        price: coursePrice,
-                        userId: 'guest-user',
+                        courseId: course.id,
+                        courseTitle: course.title,
+                        price: course.price,
+                        userId: 'guest-user', // In real app, fetch from auth context
                         userEmail: 'guest@example.com',
                         origin: window.location.origin,
                     }),
@@ -92,7 +137,17 @@ export default function CheckoutPage() {
             }
         }
         initCheckout();
-    }, []);
+    }, [course]);
+
+    if (loadingCourse) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="animate-spin text-purple-600" size={48} />
+            </div>
+        );
+    }
+
+    if (!course) return <div>Curso não encontrado.</div>;
 
     return (
         <div className={styles.container}>
@@ -120,11 +175,12 @@ export default function CheckoutPage() {
                                     variables: { colorPrimary: '#5022c3' }
                                 }
                             }}>
-                                <CheckoutForm price={coursePrice} clientSecret={clientSecret} />
+                                <CheckoutForm price={course.price} clientSecret={clientSecret} />
                             </Elements>
                         ) : (
                             <div className="p-8 text-center text-gray-500">
-                                Carregando formulário seguro...
+                                <Loader2 className="animate-spin mx-auto mb-2" />
+                                Preparando pagamento...
                             </div>
                         )}
                     </Card>
@@ -137,16 +193,18 @@ export default function CheckoutPage() {
                         <div className={styles.item}>
                             <div className="relative w-[60px] h-[60px] rounded overflow-hidden flex-shrink-0 bg-gray-200">
                                 <img
-                                    src="/nomad-sapiens-logo.png"
-                                    alt="Capa do Curso"
-                                    className="w-full h-full object-contain p-1"
+                                    src={course.image_url || '/nomad-sapiens-logo.png'}
+                                    alt={course.title}
+                                    className="w-full h-full object-cover"
                                 />
                             </div>
                             <div>
-                                <h4>Nômade Digital 2024</h4>
-                                <p>Rafael Barbosa</p>
+                                <h4 className="font-semibold text-sm line-clamp-2">{course.title}</h4>
+                                <p className="text-xs text-gray-500">{course.instructor || 'Nomad Sapiens'}</p>
                             </div>
-                            <div className={styles.price}>R$ {coursePrice.toFixed(2).replace('.', ',')}</div>
+                            <div className={styles.price}>
+                                R$ {course.price?.toFixed(2).replace('.', ',')}
+                            </div>
                         </div>
 
                         <div className={styles.policies}>
@@ -160,3 +218,10 @@ export default function CheckoutPage() {
     );
 }
 
+export default function CheckoutPage() {
+    return (
+        <Suspense fallback={<div className="p-10 text-center">Carregando...</div>}>
+            <CheckoutContent />
+        </Suspense>
+    );
+}

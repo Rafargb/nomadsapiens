@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Play, Info, Lock, X, Search, Bell, ChevronDown } from 'lucide-react';
+import { Play, Info, Lock, X, Search, Bell, ChevronDown, Menu } from 'lucide-react';
 import styles from './page.module.css';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -21,12 +21,11 @@ interface Course {
 
 export default function NetflixDashboard() {
     const [scrolled, setScrolled] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [user, setUser] = useState<any>(null);
     const isAdmin = user?.email === 'rafaelbarbosa85rd@gmail.com' || user?.email?.includes('admin');
 
     const [heroIndex, setHeroIndex] = useState(0);
-    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-    const [showModal, setShowModal] = useState(false);
 
     // Data State
     const [allCourses, setAllCourses] = useState<Course[]>([]);
@@ -70,6 +69,11 @@ export default function NetflixDashboard() {
 
                 if (coursesData) {
                     coursesData.forEach(course => {
+                        // Fix broken image for Filmmaker Pro
+                        if (course.title?.toLowerCase().includes('filmmaker')) {
+                            course.image_url = 'https://images.unsplash.com/photo-1585647347483-22b66260dfff?q=80&w=800&auto=format&fit=crop';
+                        }
+
                         if (enrolledCourseIds.includes(course.id)) {
                             // User owns this course
                             my.push({ ...course, is_locked: false }); // Force unlock in UI
@@ -103,12 +107,10 @@ export default function NetflixDashboard() {
     useEffect(() => {
         if (billboardCourses.length === 0) return;
         const interval = setInterval(() => {
-            if (!showModal) {
-                setHeroIndex((prev) => (prev + 1) % billboardCourses.length);
-            }
+            setHeroIndex((prev) => (prev + 1) % billboardCourses.length);
         }, 8000);
         return () => clearInterval(interval);
-    }, [showModal, billboardCourses]);
+    }, [billboardCourses]);
 
     if (loading) {
         return <div className={styles.container} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
@@ -125,6 +127,9 @@ export default function NetflixDashboard() {
             {/* Navbar */}
             <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
                 <div className={styles.navLeft}>
+                    <div className={styles.mobileMenuToggle} onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                        <Menu size={24} color="white" />
+                    </div>
                     <Link href="/" className={styles.logo}>
                         <Image
                             src="/nomad-iso-transparent.png"
@@ -136,20 +141,45 @@ export default function NetflixDashboard() {
                         />
                     </Link>
                     <div className={styles.navLinks}>
-                        <Link href="/" className={`${styles.navLink} ${styles.active}`}>Início</Link>
-                        <a href="#" className={styles.navLink}>Séries</a>
-                        <a href="#" className={styles.navLink}>Filmes</a>
-                        <a href="#" className={styles.navLink}>Bombando</a>
+                        <Link href="/courses/netflix" className={`${styles.navLink} ${styles.active}`}>Início</Link>
+                        <a href="#" className={styles.navLink}>Profissões</a>
+                        <a href="#" className={styles.navLink}>Idiomas</a>
+                        <a href="#" className={styles.navLink}>Marketing Digital</a>
+                        <a href="#" className={styles.navLink}>Inteligência Artificial</a>
                         <a href="#" className={styles.navLink}>Minha Lista</a>
-                        <a href="#" className={styles.navLink}>Navegar por idiomas</a>
                     </div>
+                    {mobileMenuOpen && (
+                        <>
+                            <div className={styles.mobileMenuOverlay} onClick={() => setMobileMenuOpen(false)} />
+                            <div className={styles.mobileDropdown}>
+                                <div className="flex items-center gap-3 mb-8 pl-1">
+                                    <div className={styles.userAvatarSmall}>
+                                        <img
+                                            src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg"
+                                            alt="User"
+                                        />
+                                    </div>
+                                    <span className="text-gray-400 font-bold text-sm">
+                                        {user?.user_metadata?.full_name?.split(' ')[0] || 'Usuário'}
+                                    </span>
+                                    <ChevronDown size={14} className="text-gray-400 ml-auto" />
+                                </div>
+
+                                <Link href="/courses/netflix" className={styles.mobileDropdownItem} onClick={() => setMobileMenuOpen(false)}>Início</Link>
+                                <span className={styles.mobileDropdownItem}>Profissões</span>
+                                <span className={styles.mobileDropdownItem}>Idiomas</span>
+                                <span className={styles.mobileDropdownItem}>Marketing Digital</span>
+                                <span className={styles.mobileDropdownItem}>Inteligência Artificial</span>
+                                <span className={styles.mobileDropdownItem}>Minha Lista</span>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 <div className={styles.navRight}>
                     <div className={styles.navIcon}>
                         <Search size={20} color="white" />
                     </div>
-                    <span className={styles.navTextLink}>Infantil</span>
                     <div className={styles.navIcon}>
                         <Bell size={20} color="white" />
                         <span className={styles.notificationBadge}>12</span>
@@ -190,26 +220,18 @@ export default function NetflixDashboard() {
                                     {item.description}
                                 </p>
                                 <div className={styles.billboardActions}>
-                                    {!item.is_locked ? (
-                                        <Link href={`/learn/netflix/${item.id}/1`}>
-                                            <button className={styles.playButton}>
-                                                <Play fill="black" size={24} /> Continuar
-                                            </button>
-                                        </Link>
-                                    ) : (
-                                        <button
-                                            className={styles.playButton}
-                                            onClick={() => { setSelectedCourse(item); setShowModal(true); }}
-                                        >
-                                            <Play fill="black" size={24} /> Conhecer
+                                    <Link href={`/courses/netflix/${item.id}`}>
+                                        <button className={styles.playButton}>
+                                            <Play fill="black" size={24} />
+                                            {!item.is_locked ? "Assistir" : "Conhecer"}
                                         </button>
-                                    )}
-                                    <button
-                                        className={styles.infoButton}
-                                        onClick={() => { setSelectedCourse(item); setShowModal(true); }}
-                                    >
-                                        <Info size={24} /> Mais Informações
-                                    </button>
+                                    </Link>
+
+                                    <Link href={`/courses/netflix/${item.id}`}>
+                                        <button className={styles.infoButton}>
+                                            <Info size={24} /> Mais Informações
+                                        </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -226,7 +248,7 @@ export default function NetflixDashboard() {
                         <h2 className={styles.rowTitle}>Minha Lista (Meus Cursos)</h2>
                         <div className={styles.slider}>
                             {myCourses.map(course => (
-                                <Link href={`/learn/netflix/${course.id}/1`} key={course.id}>
+                                <Link href={`/courses/netflix/${course.id}`} key={course.id}>
                                     <div className={styles.continueCardWrapper}>
                                         <div className={styles.continueCardInner}>
                                             <img src={course.image_url} className={styles.cardImage} alt={course.title} />
@@ -273,7 +295,7 @@ export default function NetflixDashboard() {
                                 <h2 className={styles.rowTitle}>{displayTitle}</h2>
                                 <div className={styles.slider}>
                                     {catCourses.map(course => (
-                                        <div className={styles.cardWrapper} key={course.id} onClick={() => { setSelectedCourse(course); setShowModal(true); }}>
+                                        <Link href={`/courses/netflix/${course.id}`} key={course.id} className={styles.cardWrapper}>
                                             <div className={styles.cardInner}>
                                                 <img src={course.image_url} className={`${styles.cardImage} ${styles.locked}`} alt={course.title} />
                                                 <div className={styles.lockOverlay}>
@@ -286,7 +308,7 @@ export default function NetflixDashboard() {
                                                     <div className={styles.cardMeta}>Disponível</div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </Link>
                                     ))}
                                 </div>
                             </section>
@@ -299,7 +321,7 @@ export default function NetflixDashboard() {
                             <h2 className={styles.rowTitle}>Explorar Novos Horizontes</h2>
                             <div className={styles.slider}>
                                 {availableCourses.map(course => (
-                                    <div className={styles.cardWrapper} key={course.id} onClick={() => { setSelectedCourse(course); setShowModal(true); }}>
+                                    <Link href={`/courses/netflix/${course.id}`} key={course.id} className={styles.cardWrapper}>
                                         <div className={styles.cardInner}>
                                             <img src={course.image_url} className={`${styles.cardImage} ${styles.locked}`} alt={course.title} />
                                             <div className={styles.lockOverlay}>
@@ -312,7 +334,7 @@ export default function NetflixDashboard() {
                                                 <div className={styles.cardMeta}>Disponível</div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         </section>
@@ -320,41 +342,6 @@ export default function NetflixDashboard() {
                 )}
 
             </div>
-
-            {/* Modal Details */}
-            {showModal && selectedCourse && (
-                <div className={styles.modalOverlay} onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
-                    <div className={styles.modalContent}>
-                        <button className={styles.modalClose} onClick={() => setShowModal(false)}>
-                            <X size={24} />
-                        </button>
-                        <div className={styles.modalHero}>
-                            <img
-                                src={selectedCourse.image_url}
-                                alt={selectedCourse.title}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                        </div>
-                        <div className={styles.modalDetails}>
-                            <h2 className={styles.modalTitle}>{selectedCourse.title}</h2>
-                            <p className={styles.salesCopy}>
-                                {selectedCourse.sales_copy || selectedCourse.description}
-                            </p>
-
-                            {!selectedCourse.is_locked ? (
-                                <Link href={`/learn/netflix/${selectedCourse.id}/1`} className={styles.unlockButton} style={{ background: '#fff', color: '#000' }}>
-                                    <Play fill="black" size={20} style={{ display: 'inline', marginRight: '8px' }} />
-                                    Continuar Assistindo
-                                </Link>
-                            ) : (
-                                <Link href={`/checkout?courseId=${selectedCourse.id}`} className={styles.unlockButton}>
-                                    Adquirir Acesso (Via Checkout)
-                                </Link>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

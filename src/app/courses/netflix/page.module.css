@@ -4,6 +4,8 @@
     color: #fff;
     font-family: var(--font-sans);
     padding-bottom: 4rem;
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
 }
 
 .navbar {
@@ -26,7 +28,6 @@
 
 .logo {
     display: block;
-    /* Ensure link behaves as block for image */
 }
 
 .logoImage {
@@ -46,15 +47,15 @@
     display: flex;
     gap: 1.5rem;
     margin-left: 2rem;
-    /* Added spacing from logo */
 }
 
 /* Navigation Links */
 .navLink {
     color: #e5e5e5;
     text-decoration: none;
-    font-size: 0.85rem;
-    /* Slightly smaller for Netflix look */
+    font-size: 0.9rem;
+    /* Adjusted for readability */
+    font-weight: 500;
     transition: color 0.3s;
 }
 
@@ -72,7 +73,8 @@
 .navRight {
     display: flex;
     align-items: center;
-    gap: 1.2rem;
+    gap: 1.5rem;
+    /* Increased spacing */
     font-size: 0.9rem;
     color: white;
 }
@@ -86,7 +88,7 @@
 }
 
 .navTextLink {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: #e5e5e5;
     cursor: pointer;
     transition: color 0.2s;
@@ -111,6 +113,97 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.mobileMenuToggle {
+    display: none;
+    cursor: pointer;
+    margin-right: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Mobile Sidebar Menu */
+.mobileMenuOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 900;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+
+.mobileDropdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 75%;
+    max-width: 320px;
+    background-color: #000;
+    border-right: 1px solid #333;
+    padding: 2rem;
+    padding-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    z-index: 1000;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.mobileDropdownItem {
+    color: #808080;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    padding-left: 0;
+}
+
+.userAvatarSmall {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 4px;
+    background-color: #E50914;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.userAvatarSmall img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mobileDropdownItem:hover {
+    color: #fff;
+    padding-left: 10px;
+}
+
+/* Active State simulation for 'Início' */
+.mobileDropdownItem:first-child {
+    color: #fff;
+    padding-left: 0;
 }
 
 .navProfile {
@@ -140,8 +233,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin-bottom: 0px;
-    /* No overlap, rely on gradient blend */
+    margin-bottom: 2rem;
+    /* Add spacing below hero */
 }
 
 .billboardItem {
@@ -153,8 +246,6 @@
     opacity: 0;
     transition: opacity 1s ease-in-out;
     z-index: 5;
-    display: flex;
-    align-items: center;
     pointer-events: none;
 }
 
@@ -172,45 +263,39 @@
     height: 100%;
     object-fit: cover;
     z-index: 0;
-    /* Removed mask-image to fix hard line issue */
+    /* Ensure image doesn't break layout */
+    max-width: 100%;
 }
 
-/* Add high-quality gradient overlay via pseudo-element */
+/* Add high-quality gradient overlay */
 .billboardItem::after {
     content: '';
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    /* Richer gradient: Transparent top -> subtle shadow -> full solid bottom earlier */
-    /* Richer gradient: Transparent top -> subtle shadow -> full solid bottom */
     background: linear-gradient(to bottom,
             rgba(20, 20, 20, 0) 0%,
-            rgba(20, 20, 20, 0.05) 50%,
-            /* Keep most of the image clear */
-            rgba(20, 20, 20, 0.8) 80%,
-            /* Darker transition */
-            #141414 98%,
-            /* Safety buffer: solid slightly before end */
+            rgba(20, 20, 20, 0) 50%,
+            rgba(20, 20, 20, 0.4) 70%,
+            rgba(20, 20, 20, 0.9) 90%,
             #141414 100%);
+    /* Seamless blend to black */
     z-index: 2;
     pointer-events: none;
 }
 
 .billboardContent {
-    position: relative;
-    z-index: 10;
-    padding-left: 4%;
+    position: absolute;
+    bottom: 20%;
+    /* Lift content */
+    left: 4%;
     width: 40%;
+    z-index: 10;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    height: 100%;
-    /* Full height to align content properly */
-    justify-content: center;
-    /* Center vertically */
-    padding-bottom: 5rem;
-    /* Push up slightly */
+    padding-right: 2rem;
 }
 
 .billboardTitle {
@@ -218,6 +303,7 @@
     font-weight: 800;
     line-height: 1.1;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.45);
+    margin-bottom: 0.5rem;
 }
 
 .billboardDesc {
@@ -225,11 +311,14 @@
     font-weight: 400;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.45);
     color: #fff;
+    line-height: 1.5;
+    max-width: 600px;
 }
 
 .billboardActions {
     display: flex;
     gap: 1rem;
+    margin-top: 1rem;
 }
 
 .playButton {
@@ -275,6 +364,8 @@
     position: relative;
     z-index: 20;
     padding-bottom: 2rem;
+    margin-top: -10vh;
+    /* Pull up over gradient */
 }
 
 .row {
@@ -286,7 +377,7 @@
     font-size: 1.4rem;
     color: #e5e5e5;
     font-weight: 600;
-    margin-bottom: 0.8rem;
+    margin-bottom: 1.5rem;
     transition: color 0.2s;
 }
 
@@ -296,25 +387,24 @@
 
 .slider {
     display: flex;
-    gap: 0.5rem;
+    gap: 1.5rem;
+    /* Slightly more gap for vertical cards */
     overflow-x: auto;
     padding: 2rem 0;
-    /* Space for hover expansion */
     margin: -2rem 0;
-    /* compensate padding */
     padding-right: 4%;
     scrollbar-width: none;
-    /* Firefox */
 }
 
 .slider::-webkit-scrollbar {
     display: none;
 }
 
-/* Improved Card Styles */
+/* Improved Card Styles - VERTICAL POSTERS */
 .cardWrapper {
-    flex: 0 0 280px;
-    /* Fixed width cards */
+    flex: 0 0 260px;
+    /* Reduced width for vertical ratio */
+    width: 260px;
     position: relative;
     transition: transform 0.3s ease, z-index 0.3s;
     cursor: pointer;
@@ -322,7 +412,6 @@
 
 .cardWrapper:hover {
     transform: scale(1.1);
-    /* Zoom effect */
     z-index: 50;
 }
 
@@ -331,7 +420,8 @@
     border-radius: 4px;
     overflow: hidden;
     background: #1f1f1f;
-    aspect-ratio: 16/9;
+    aspect-ratio: 2/3;
+    /* Vertical Poster */
 }
 
 .cardImage {
@@ -379,20 +469,68 @@
 }
 
 .cardTitle {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    line-height: 1.2;
 }
 
 .cardMeta {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     color: #46d369;
-    /* Netflix Match Green */
     font-weight: 700;
+}
+
+/* Continue Watching Cards (Vertical Cinematic) */
+.continueCardWrapper {
+    flex: 0 0 260px;
+    width: 260px;
+    min-width: 260px;
+    max-width: 260px;
+    position: relative;
+    transition: transform 0.3s ease, z-index 0.3s;
+    cursor: pointer;
+}
+
+.continueCardWrapper:hover {
+    transform: scale(1.1);
+    z-index: 50;
+}
+
+.continueCardInner {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #1f1f1f;
+    aspect-ratio: 2/3;
+    /* Vertical */
+}
+
+.continueTitle {
+    position: absolute;
+    inset: 0;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    /* Text at bottom for posters */
+    text-align: center;
+    padding-bottom: 1.5rem;
+
+    /* Cinematic Logo Style */
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    text-transform: uppercase;
+    font-size: 1rem;
+    line-height: 1.1;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+    z-index: 10;
+
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
 }
 
 .progressBar {
@@ -400,16 +538,19 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: #333;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 20;
 }
 
 .progressFill {
     height: 100%;
     background: #E50914;
+    box-shadow: 0 0 5px rgba(229, 9, 20, 0.5);
 }
 
 /* Modal Styles */
+/* Kept for legacy support, though we use router now */
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -512,68 +653,29 @@
     }
 }
 
-/* Continue Watching Cards (Horizontal Cinematic) */
-.continueCardWrapper {
-    flex: 0 0 280px;
-    width: 280px;
-    /* Explicit width */
-    min-width: 280px;
-    /* Prevent shrinking */
-    max-width: 280px;
-    /* PREVENT GROWING */
-    position: relative;
-    transition: transform 0.3s ease, z-index 0.3s;
-    cursor: pointer;
-}
-
-.continueCardWrapper:hover {
-    transform: scale(1.1);
-    z-index: 50;
-}
-
-.continueCardInner {
-    position: relative;
-    border-radius: 4px;
-    overflow: hidden;
-    background: #1f1f1f;
-    aspect-ratio: 16/9;
-}
-
-.continueTitle {
-    position: absolute;
-    inset: 0;
-    padding: 0.5rem;
+.emptyStateCore {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     justify-content: center;
-    align-items: center;
-    text-align: center;
-
-    /* Cinematic Logo Style - Adjusted Size */
-    font-family: 'Arial Black', 'Impact', sans-serif;
-    text-transform: uppercase;
-    font-size: 1.2rem;
-    line-height: 1.1;
-    color: #fff;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-    z-index: 10;
-
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent, rgba(0, 0, 0, 0.3));
-}
-
-.progressBar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.3);
+    padding: 0 0 2rem 4%;
+    text-align: left;
+    margin-bottom: 2rem;
+    width: 100%;
+    position: relative;
     z-index: 20;
 }
 
-.progressFill {
-    height: 100%;
-    background: #E50914;
-    box-shadow: 0 0 5px rgba(229, 9, 20, 0.5);
+.emptyStateCore h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.emptyStateCore p {
+    color: #808080;
+    font-size: 1rem;
 }
 
 /* Mobile Responsive Fixes */
@@ -588,17 +690,15 @@
     }
 
     .navLinks {
-        gap: 1rem;
-        margin-left: 1rem;
-    }
-
-    /* Hide specific links to avoid overlap */
-    .navLink:not(.active) {
         display: none;
     }
 
     .navRight {
         gap: 0.8rem;
+    }
+
+    .mobileMenuToggle {
+        display: flex;
     }
 
     .navTextLink {
@@ -608,7 +708,6 @@
     .billboard {
         height: 60vh;
         margin-bottom: 0;
-        /* Fix mobile overlap/breaking */
     }
 
     .billboardContent {
@@ -616,12 +715,10 @@
         padding: 0 1rem;
         bottom: 0;
         height: auto;
-        /* Re-affirm absolute positioning for bottom alignment */
+        left: 0;
         justify-content: flex-end;
-        padding-bottom: 3rem;
-        /* Removed padding-top so Title doesn't move down */
-
-        /* Enhanced Mobile Gradient: Soft top -> Solid bottom matching bg */
+        padding-bottom: 5rem;
+        /* Increased padding to avoid overlap */
         background: linear-gradient(to bottom,
                 transparent 0%,
                 rgba(20, 20, 20, 0.6) 20%,
@@ -641,13 +738,15 @@
         max-width: 100%;
         display: -webkit-box;
         -webkit-line-clamp: 3;
+        line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .billboardActions {
         gap: 0.5rem;
+        margin-top: 0;
     }
 
     .playButton,
@@ -657,6 +756,7 @@
     }
 
     /* Adjust Card sizes for mobile */
+    .cardWrapper,
     .continueCardWrapper {
         flex: 0 0 200px;
         width: 200px;
@@ -664,53 +764,22 @@
         max-width: 200px;
     }
 
+    .slider {
+        gap: 1.5rem;
+    }
+
     .continueTitle {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 
-    .modalContent {
-        width: 95%;
-        margin: 1rem;
-        max-height: 90vh;
-        overflow-y: auto;
+    .rowsContainer {
+        margin-top: -2rem;
+        /* Reduced overlap */
+        position: relative;
+        z-index: 30;
     }
 
-    .modalHero {
-        height: 200px;
+    .rowTitle {
+        margin-bottom: 0.8rem;
     }
-
-    .modalTitle {
-        font-size: 1.5rem;
-    }
-
-    .emptyStateCore {
-        padding-top: 2rem;
-        /* Clean, standard spacing */
-    }
-}
-
-.emptyStateCore {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 0 0 2rem 4%;
-    /* Zero top padding for Desktop to be close */
-    text-align: left;
-    margin-bottom: 2rem;
-    width: 100%;
-    position: relative;
-    z-index: 20;
-}
-
-.emptyStateCore h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 0.5rem;
-}
-
-.emptyStateCore p {
-    color: #808080;
-    font-size: 1rem;
 }

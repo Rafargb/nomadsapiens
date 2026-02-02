@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Painel Admin - Nomad Sapiens</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 0;
+            border-right: 1px solid #eee;
+            position: fixed;
+            height: 100vh;
+            z-index: 10;
+            left: 0;
+            top: 0;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #00c853;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 40px;
+            font-weight: 900;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            flex: 1;
+            width: 100%;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: #9aa0a6;
+            padding: 10px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: #00c853;
+            background: #e8f5e9;
+        }
+
+        .nav-item.active {
+            position: relative;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: #00c853;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #e0f2f1;
+            color: #00695c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 80px;
+            flex: 1;
+            padding: 32px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Grid Layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: auto auto 1fr;
+            gap: 24px;
+        }
+
+        /* Banner */
+        .banner {
+            grid-column: 1;
+            background: #000;
+            border-radius: 20px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: radial-gradient(circle at 60% 50%, #004d40 0%, #000000 70%);
+            z-index: 0;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 1;
+            max-width: 60%;
+        }
+
+        .banner-label {
+            color: #4ade80;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .banner h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .banner-btn {
+            background: #46f06a;
+            color: #000;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* Wallet */
+        .wallet-card {
+            grid-column: 2;
+            background: linear-gradient(135deg, #00695c 0%, #004d40 100%);
+            border-radius: 20px;
+            padding: 24px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .balance {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .wallet-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .wallet-info {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .wallet-info strong {
+            display: block;
+            font-size: 14px;
+            opacity: 1;
+        }
+
+        .wallet-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .action-btn.glass {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .action-btn.white {
+            background: white;
+            color: #004d40;
+        }
+
+        /* Stats */
+        .stats-row {
+            grid-column: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            border: 1px solid #f0f0f0;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        /* Chart */
+        .chart-section {
+            grid-column: 1;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            height: 300px;
+            border: 1px solid #f0f0f0;
+            margin-top: 24px;
+        }
+
+        .chart-visual {
+            margin-top: 24px;
+            height: 200px;
+            background: repeating-linear-gradient(0deg, transparent, transparent 39px, #eee 40px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-path {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(90deg, transparent, rgba(0, 200, 83, 0.1) 50%, transparent);
+            clip-path: polygon(0% 100%, 10% 80%, 20% 85%, 30% 60%, 40% 70%, 50% 40%, 60% 55%, 70% 30%, 80% 45%, 90% 20%, 100% 10%, 100% 100%);
+            background-color: rgba(0, 200, 83, 0.2);
+        }
+
+        /* Recent Sales */
+        .recent-sales {
+            grid-column: 2;
+            grid-row: 2 / 4;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .section-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .link-more {
+            font-size: 12px;
+            color: #00c853;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .sales-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .sale-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .sale-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .sale-meta {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .sale-thumb {
+            width: 48px;
+            height: 36px;
+            background: #eee;
+            border-radius: 6px;
+        }
+
+        /* Icons (SVGs) */
+        .icon {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .icon-sm {
+            width: 14px;
+            height: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo-icon">✓</div>
+        <nav class="nav">
+            <div class="nav-item active"><svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg></div>
+            <div class="nav-item"><svg class="icon" viewBox="0 0 24 24">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg></div>
+            <div class="nav-item"><svg class="icon" viewBox="0 0 24 24">
+                    <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v5"></path>
+                    <path d="M3 15h18v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6z"></path>
+                    <path d="M12 12v.01"></path>
+                </svg></div>
+            <div class="nav-item"><svg class="icon" viewBox="0 0 24 24">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg></div>
+            <div class="nav-item"><svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg></div>
+        </nav>
+        <div class="user-avatar">RG</div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="grid-container">
+
+            <!-- Banner -->
+            <div class="banner">
+                <div class="banner-content">
+                    <span class="banner-label">DO BRASIL PARA O MUNDO</span>
+                    <h1>Seu produto digital sem limite de fronteiras</h1>
+                    <p style="margin-bottom: 16px; font-size: 14px;">Chegou a Greenn Internacional. Venda em outros
+                        países e receba em reais.</p>
+                    <button class="banner-btn">SAIBA MAIS</button>
+                </div>
+            </div>
+
+            <!-- Wallet -->
+            <div class="wallet-card">
+                <div class="card-header">
+                    <h3>Minha carteira</h3>
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </div>
+                <div class="balance">R$ 188,71</div>
+                <div class="wallet-footer">
+                    <div class="wallet-info">
+                        <span>Antecipável:</span>
+                        <strong>R$ 0,00</strong>
+                    </div>
+                    <div class="wallet-actions">
+                        <button class="action-btn glass">Antecipar</button>
+                        <button class="action-btn white">Sacar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-header">🛒 Vendas (Matrículas)</div>
+                    <div class="stat-value">3 (Real)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">📅 Cursos Ativos</div>
+                    <div class="stat-value">12 (Real)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">💲 Vendas totais (Est.)</div>
+                    <div class="stat-value">R$ 293,70</div>
+                </div>
+            </div>
+
+            <!-- Recent Sales -->
+            <div class="recent-sales">
+                <div class="section-header">
+                    <h3>Vendas recentes</h3>
+                    <span class="link-more">Mais ></span>
+                </div>
+                <div class="sales-list">
+                    <div class="sale-item">
+                        <div class="sale-info">
+                            <h4>Pack Backgrounds Viral</h4>
+                            <span class="sale-meta">há 9 horas | Pix</span>
+                        </div>
+                        <div class="sale-thumb"></div>
+                    </div>
+                    <div class="sale-item">
+                        <div class="sale-info">
+                            <h4>Cortes Gringos RPM</h4>
+                            <span class="sale-meta">há 9 horas | Pix</span>
+                        </div>
+                        <div class="sale-thumb"></div>
+                    </div>
+                    <div class="sale-item">
+                        <div class="sale-info">
+                            <h4>Biblioteca de Cortes</h4>
+                            <span class="sale-meta">há 9 horas | Pix</span>
+                        </div>
+                        <div class="sale-thumb"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="chart-section">
+                <div class="card-header" style="color:#1a1a1a;">Vendas últimos 7 dias</div>
+                <div class="chart-visual">
+                    <div class="chart-path"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+
+</html>

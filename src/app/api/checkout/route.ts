@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error('STRIPE_SECRET_KEY is missing');
-}
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+// Initialize safely for build time (will check for real key in handler)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'build_dummy_key', {
     typescript: true,
 });
 

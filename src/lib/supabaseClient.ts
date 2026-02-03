@@ -1,6 +1,5 @@
 
-import { createClient } from '@supabase/supabase-js'
-
+import { createBrowserClient } from '@supabase/ssr'
 
 // Use environment variables for security
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -10,4 +9,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
     console.warn('⚠️ Supabase credentials missing! Check your .env.local file.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export const supabase = createBrowserClient(
+    supabaseUrl || 'https://placeholder.supabase.co',
+    supabaseAnonKey || 'placeholder_key'
+);

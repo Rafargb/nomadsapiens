@@ -1,36 +1,58 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(req: NextRequest) {
-    const res = NextResponse.next();
-    const supabase = createMiddlewareClient({ req, res });
+export async function middleware(request: NextRequest) {
+    let response = NextResponse.next({
+        request: {
+            headers: request.headers,
+        },
+    })
 
-    const {
-        data: { session },
-    } = await supabase.auth.getSession();
+    // Create an authenticated Supabase client for the server environment
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return request.cookies.getAll()
+                },
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+                    response = NextResponse.next({
+                        request: {
+                            headers: request.headers,
+                        },
+                    })
+                    cookiesToSet.forEach(({ name, value, options }) =>
+                        response.cookies.set(name, value, options)
+                    )
+                },
+            },
+        }
+    )
 
-    // Protect Admin Routes
-    if (req.nextUrl.pathname.startsWith('/admin')) {
-        if (!session) {
-            // Redirect to login if not authenticated
-            return NextResponse.redirect(new URL('/', req.url));
+    // Refresh session if expired - required for Server Components
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // ROUTE PROTECTION
+    if (request.nextUrl.pathname.startsWith('/admin')) {
+        if (!user) {
+            return NextResponse.redirect(new URL('/', request.url))
         }
 
-        // Optional: Check for specific admin email claim
-        // This is a basic check. In production, use Custom Claims or a separate table.
-        const userEmail = session.user.email;
+        // Basic Admin Check
+        const userEmail = user.email;
         const isAdmin = userEmail?.includes('admin') || userEmail === 'rafaelbarbosa85rd@gmail.com';
 
         if (!isAdmin) {
-            // Redirect unauthorized users to home
-            return NextResponse.redirect(new URL('/', req.url));
+            return NextResponse.redirect(new URL('/', request.url))
         }
     }
 
-    return res;
+    return response
 }
 
 export const config = {
     matcher: ['/admin/:path*'],
-};
+}

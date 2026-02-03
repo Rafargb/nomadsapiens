@@ -19,39 +19,7 @@
     z-index: 10;
 }
 
-.logoArea {
-    margin-bottom: 40px;
 
-    .logoIcon {
-        width: 32px;
-        height: 32px;
-        background: #00c853;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-    }
-
-    .gridIcon::before {
-        content: '✓';
-        /* Simple approximate logo */
-        font-weight: 900;
-    }
-
-    .brandName {
-        font-weight: 700;
-        color: #1a1a1a;
-        font-size: 18px;
-        letter-spacing: -0.5px;
-    }
-}
-
-.brandName {
-    font-weight: 700;
-    color: #1a1a1a;
-    font-size: 14px;
-}
 
 .nav {
     display: flex;
@@ -68,6 +36,43 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    /* Ensure relative for tooltip positioning */
+}
+
+/* Tooltip styles */
+.navItem:hover::after {
+    content: attr(data-label);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 12px;
+    background: #1a1a1a;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Small arrow for tooltip */
+.navItem:hover::before {
+    content: '';
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent #1a1a1a transparent transparent;
+    z-index: 100;
+    pointer-events: none;
 }
 
 .navItem:hover {

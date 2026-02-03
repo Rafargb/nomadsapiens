@@ -12,33 +12,28 @@ import {
 export default function AdminSidebar() {
     return (
         <aside className={styles.sidebar}>
-            <div className={styles.logoArea}>
-                <div className={styles.logoIcon}>
-                    <div className={styles.gridIcon}></div>
-                </div>
-                <span className={styles.brandName}>greenn</span>
-            </div>
+
 
             <nav className={styles.nav}>
-                <a href="/admin-dashboard" className={`${styles.navItem} ${styles.active}`} title="Dashboard">
+                <a href="/admin" className={`${styles.navItem} ${styles.active}`} title="Dashboard" data-label="Dashboard">
                     <Home size={22} />
                 </a>
-                <a href="/admin/courses" className={styles.navItem} title="Meus Cursos">
+                <a href="/admin/courses" className={styles.navItem} title="Meus Cursos" data-label="Meus Cursos">
                     <ShoppingBag size={22} />
                 </a>
-                <a href="/admin/finance" className={styles.navItem} title="Financeiro">
+                <a href="/admin/finance" className={styles.navItem} title="Financeiro" data-label="Financeiro">
                     <Wallet size={22} />
                 </a>
-                <a href="#" className={styles.navItem} title="Estatísticas">
+                <a href="/admin/analytics" className={styles.navItem} title="Estatísticas" data-label="Estatísticas">
                     <BarChart2 size={22} />
                 </a>
-                <a href="#" className={styles.navItem}>
+                <a href="/admin/history" className={styles.navItem} title="Histórico" data-label="Histórico">
                     <Clock size={22} />
                 </a>
-                <a href="/offer" className={styles.navItem} title="Ofertas">
+                <a href="/admin/offers" className={styles.navItem} title="Ofertas" data-label="Ofertas">
                     <Gift size={22} />
                 </a>
-                <a href="/admin/settings" className={styles.navItem} title="Configurações">
+                <a href="/admin/settings" className={styles.navItem} title="Configurações" data-label="Configurações">
                     <Settings size={22} />
                 </a>
             </nav>

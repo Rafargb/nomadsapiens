@@ -53,7 +53,9 @@ export const Navbar = () => {
         return null;
     }
 
-    const isAdmin = user?.email === 'rafaelbarbosa85rd@gmail.com' || user?.email?.includes('admin');
+    // Secure Admin Check inside Component (Hides Verified Admin Visuals)
+    const userEmail = user?.email;
+    const isAdmin = userEmail?.includes('admin') || userEmail === 'rafaelbarbosa85rd@gmail.com';  // Must match Middleware
 
     return (
         <header className={`${styles.header} ${isHome ? styles.transparentHomepage : 'glass'}`}>
@@ -99,9 +101,9 @@ export const Navbar = () => {
                             </button>
 
                             {userMenuOpen && (
-                                <div className="absolute right-0 mt-3 w-80 bg-[#1e1e1e] border border-white/10 rounded-3xl shadow-2xl py-2 z-50 backdrop-blur-md ring-1 ring-white/5 overflow-hidden">
-                                    {/* Google Style Header */}
-                                    <div className="flex flex-col items-center justify-center pt-6 pb-4 border-b border-white/10 bg-white/5 mx-2 rounded-t-2xl">
+                                <div className="absolute right-0 mt-2 w-72 bg-[#1a1a1a] rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden z-[100] ring-1 ring-white/5 origin-top-right transform transition-all">
+                                    {/* Header - Darker tone */}
+                                    <div className="flex flex-col items-center justify-center py-6 border-b border-white/5 bg-white/[0.02]">
                                         <div className="w-20 h-20 rounded-full overflow-hidden mb-3 border-4 border-[#1e1e1e] shadow-lg">
                                             {user.user_metadata?.avatar_url ? (
                                                 <Image

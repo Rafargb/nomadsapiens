@@ -1,4 +1,5 @@
 "use client";
+// Force Vercel Deploy
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -32,7 +33,7 @@ export default function CreateCoursePage() {
         setMessage(null);
 
         try {
-            const { error } = await supabase.from('courses').insert([
+            const { data, error } = await supabase.from('courses').insert([
                 {
                     title: formData.title,
                     image_url: formData.image_url || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800',
@@ -42,15 +43,19 @@ export default function CreateCoursePage() {
                     is_locked: formData.is_locked,
                     match_score: formData.match_score
                 }
-            ]);
+            ]).select().single();
 
             if (error) throw error;
 
-            setMessage({ type: 'success', text: 'Curso criado e publicado com sucesso!' });
+            setMessage({ type: 'success', text: 'Curso criado! Redirecionando para adicionar aulas...' });
 
             setTimeout(() => {
-                router.push('/courses/netflix');
-            }, 1500);
+                if (data) {
+                    router.push(`/admin/courses/${data.id}/lessons`);
+                } else {
+                    router.push('/admin/courses');
+                }
+            }, 1000);
 
         } catch (err: any) {
             console.error(err);

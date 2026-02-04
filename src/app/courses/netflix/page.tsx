@@ -246,7 +246,7 @@ export default function NetflixDashboard() {
                                     className={styles.dropdownItem}
                                     style={{ width: '100%', border: 'none', background: 'transparent', textAlign: 'left' }}
                                 >
-                                    Sair da Netflix
+                                    Sair
                                 </button>
                             </div>
                         )}

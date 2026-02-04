@@ -67,7 +67,7 @@ export default function RegisterPage() {
                             Enviamos um link de confirmação para <br />
                             <span className="font-semibold text-gray-900">{email}</span>.
                         </p>
-                        <p className="text-sm text-gray-500 mb-8">
+                        <p className="text-sm text-gray-500 mb-12">
                             Por segurança, sua conta só será ativada após você clicar no link enviado.
                         </p>
                         <Button fullWidth size="lg" onClick={() => router.push('/login')}>

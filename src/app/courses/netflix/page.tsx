@@ -172,6 +172,25 @@ export default function NetflixDashboard() {
                                 <span className={styles.mobileDropdownItem}>Marketing Digital</span>
                                 <span className={styles.mobileDropdownItem}>Inteligência Artificial</span>
                                 <span className={styles.mobileDropdownItem}>Minha Lista</span>
+
+                                <div className="h-px bg-gray-800 my-4 w-full"></div>
+
+                                {isAdmin && (
+                                    <Link href="/admin/courses" className={`${styles.mobileDropdownItem} text-red-500`} onClick={() => setMobileMenuOpen(false)}>
+                                        Painel Admin
+                                    </Link>
+                                )}
+
+                                <button
+                                    onClick={async () => {
+                                        await supabase.auth.signOut();
+                                        window.location.href = '/';
+                                    }}
+                                    className={styles.mobileDropdownItem}
+                                    style={{ background: 'transparent', border: 'none', textAlign: 'left', marginTop: '10px' }}
+                                >
+                                    Sair da Netflix
+                                </button>
                             </div>
                         </>
                     )}
@@ -189,10 +208,6 @@ export default function NetflixDashboard() {
                     {/* Desktop Profile Dropdown */}
                     <div
                         className={styles.navProfile}
-                        onMouseEnter={() => setMobileMenuOpen(true)} // Using same state var or new one? strict typed? 
-                        // Better use a new state for desktop hover or click.
-                        // Actually let's use a CLICK handler for mobile-friendly consistency or Hover. Netflix uses Hover.
-                        // Let's use a new state variable specifically for this: profileMenuOpen
                         onClick={() => setProfileMenuOpen(!profileMenuOpen)}
                     >
                         <div className={styles.avatar}>

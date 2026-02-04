@@ -101,9 +101,9 @@ export const Navbar = () => {
                             </button>
 
                             {userMenuOpen && (
-                                <div className="absolute right-0 mt-2 w-72 bg-[#1a1a1a] rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden z-[100] ring-1 ring-white/5 origin-top-right transform transition-all">
-                                    {/* Header - Darker tone */}
-                                    <div className="flex flex-col items-center justify-center py-6 border-b border-white/5 bg-white/[0.02]">
+                                <div className={styles.dropdownMenu}>
+                                    {/* Header */}
+                                    <div className={styles.dropdownHeader}>
                                         <div className="w-20 h-20 rounded-full overflow-hidden mb-3 border-4 border-[#1e1e1e] shadow-lg">
                                             {user.user_metadata?.avatar_url ? (
                                                 <Image
@@ -125,34 +125,30 @@ export const Navbar = () => {
                                         <p className="text-gray-400 text-sm truncate max-w-[90%]">{user.email}</p>
                                     </div>
 
-                                    <div className="py-2 px-2">
+                                    <div className="px-2">
                                         {isAdmin && (
-                                            <Link href="/admin/courses" className="flex items-center gap-4 px-4 py-3 text-sm text-gray-200 hover:bg-white/5 rounded-xl transition-colors mb-1">
-                                                <div className="p-2 bg-blue-500/10 rounded-full text-blue-400">
-                                                    <Settings size={20} />
+                                            <Link href="/admin/courses" className={styles.dropdownItem}>
+                                                <div className={`text-blue-400 bg-blue-500/10 ${styles.dropdownIcon}`}>
+                                                    <Settings size={18} />
                                                 </div>
                                                 <span className="font-medium">Painel Admin</span>
                                             </Link>
                                         )}
 
-                                        <Link href="/courses" className="flex items-center gap-4 px-4 py-3 text-sm text-gray-200 hover:bg-white/5 rounded-xl transition-colors">
-                                            <div className="p-2 bg-green-500/10 rounded-full text-green-400">
-                                                <User size={20} />
+                                        <Link href="/courses" className={styles.dropdownItem}>
+                                            <div className={`text-green-400 bg-green-500/10 ${styles.dropdownIcon}`}>
+                                                <User size={18} />
                                             </div>
                                             <div>
                                                 <span className="font-medium block">Vitrine de Cursos</span>
-                                                <span className="text-xs text-gray-500">Explore novos conteúdos</span>
                                             </div>
                                         </Link>
                                     </div>
 
-                                    <div className="border-t border-white/10 mt-1 pt-2 pb-2 px-2">
-                                        <button
-                                            onClick={handleLogout}
-                                            className="w-full flex items-center gap-4 px-4 py-3 text-sm text-gray-200 hover:bg-red-500/10 rounded-xl transition-colors text-left"
-                                        >
-                                            <div className="p-2 bg-red-500/10 rounded-full text-red-400">
-                                                <LogOut size={20} />
+                                    <div className="border-t border-white/10 mt-2 py-2 px-2">
+                                        <button onClick={handleLogout} className={styles.dropdownItem}>
+                                            <div className={`text-red-400 bg-red-500/10 ${styles.dropdownIcon}`}>
+                                                <LogOut size={18} />
                                             </div>
                                             <span className="font-medium">Sair</span>
                                         </button>

@@ -218,7 +218,7 @@ export default function NetflixDashboard() {
                         {profileMenuOpen && (
                             <div className={styles.desktopDropdown}>
                                 {/* Show User Name */}
-                                <div className="px-5 py-2 text-xs text-gray-400 border-b border-gray-700 mb-2 font-bold">
+                                <div style={{ padding: '8px 20px', fontSize: '12px', color: '#9ca3af', borderBottom: '1px solid #374151', marginBottom: '8px', fontWeight: 'bold' }}>
                                     Olá, {user?.user_metadata?.full_name?.split(' ')[0]}
                                 </div>
 

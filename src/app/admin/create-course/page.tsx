@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-
 import { useRouter } from 'next/navigation';
+import { ChevronLeft, Upload, Lock, Unlock, AlignLeft, Image as ImageIcon, Type } from 'lucide-react';
 
 export default function CreateCoursePage() {
     const router = useRouter();
@@ -47,118 +46,186 @@ export default function CreateCoursePage() {
 
             if (error) throw error;
 
-            setMessage({ type: 'success', text: 'Curso criado e publicado na Netflix Page!' });
+            setMessage({ type: 'success', text: 'Curso criado e publicado com sucesso!' });
 
-            // Redirect to Netflix page to see content
             setTimeout(() => {
                 router.push('/courses/netflix');
             }, 1500);
 
         } catch (err: any) {
             console.error(err);
-            setMessage({ type: 'error', text: err.message || 'Erro ao criar curso. Verifique as permissões do banco (RLS).' });
+            setMessage({ type: 'error', text: err.message || 'Erro ao publicar curso.' });
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div style={{ color: '#1a1a1a', maxWidth: '800px', margin: '0 auto' }}>
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold">Adicionar Conteúdo (Estúdio)</h1>
-                <p className="text-gray-500">Preencha os dados abaixo para cadastrar um novo curso ou módulo.</p>
+        <div className="max-w-4xl mx-auto py-8 px-4">
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-8">
+                <button
+                    onClick={() => router.back()}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                    <ChevronLeft className="w-6 h-6 text-gray-600" />
+                </button>
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900">Novo Módulo (Estúdio)</h1>
+                    <p className="text-gray-500">Adicione um novo curso ou série à plataforma.</p>
+                </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+            {/* Main Form Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 {message && (
-                    <div className={`p-4 mb-6 rounded-lg text-sm font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+                    <div className={`p-4 ${message.type === 'success' ? 'bg-green-50 text-green-700 border-b border-green-100' : 'bg-red-50 text-red-700 border-b border-red-100'}`}>
                         {message.text}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">Título</label>
-                        <input
-                            name="title"
-                            required
-                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all"
-                            value={formData.title}
-                            onChange={handleChange}
-                            placeholder="Ex: Título Cinematográfico"
-                        />
-                    </div>
+                <form onSubmit={handleSubmit} className="p-8">
+                    <div className="space-y-8">
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm font-semibold text-gray-700">Categoria</label>
-                            <select
-                                name="category"
-                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all"
-                                value={formData.category}
-                                onChange={handleChange}
-                            >
-                                <option value="highlight">Banner Gigante (Highlight)</option>
-                                <option value="continue_watching">Minha Lista (Continue)</option>
-                                <option value="next_evolution">Sua Próxima Evolução (Funnel)</option>
-                                <option value="popular">Populares</option>
-                            </select>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm font-semibold text-gray-700">Conteúdo Bloqueado?</label>
-                            <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                                <input
-                                    type="checkbox"
-                                    name="is_locked"
-                                    checked={formData.is_locked}
+                        {/* Section 1: Basic Info */}
+                        <div className="space-y-6">
+                            <h2 className="text-lg font-semibold text-gray-900 border-b border-gray-100 pb-2 flex items-center gap-2">
+                                <Type className="w-5 h-5 text-gray-400" />
+                                Informações Básicas
+                            </h2>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">Título do Curso</label>
+                                    <input
+                                        name="title"
+                                        required
+                                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                                        value={formData.title}
+                                        onChange={handleChange}
+                                        placeholder="Ex: Masterclass de Cinema"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">Categoria</label>
+                                    <div className="relative">
+                                        <select
+                                            name="category"
+                                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all appearance-none"
+                                            value={formData.category}
+                                            onChange={handleChange}
+                                        >
+                                            <option value="popular">🔥 Populares</option>
+                                            <option value="highlight">⭐ Destaque (Banner Gigante)</option>
+                                            <option value="continue_watching">▶️ Minha Lista</option>
+                                            <option value="next_evolution">🚀 Próxima Evolução</option>
+                                        </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                            <ChevronDown size={16} className="rotate-0" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">Descrição Curta (Banner)</label>
+                                <textarea
+                                    name="description"
+                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all min-h-[80px]"
+                                    value={formData.description}
                                     onChange={handleChange}
-                                    className="w-5 h-5 text-green-600 rounded focus:ring-green-500 border-gray-300"
+                                    placeholder="Uma breve introdução que aparece no banner principal..."
                                 />
-                                <span className="text-sm text-gray-600">Sim (aparece cadeado)</span>
                             </div>
                         </div>
+
+                        {/* Section 2: Media & Access */}
+                        <div className="space-y-6">
+                            <h2 className="text-lg font-semibold text-gray-900 border-b border-gray-100 pb-2 flex items-center gap-2">
+                                <Upload className="w-5 h-5 text-gray-400" />
+                                Mídia e Acesso
+                            </h2>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">URL da Capa (16:9)</label>
+                                <div className="flex gap-3">
+                                    <input
+                                        name="image_url"
+                                        className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all font-mono text-sm"
+                                        value={formData.image_url}
+                                        onChange={handleChange}
+                                        placeholder="https://..."
+                                    />
+                                    {formData.image_url && (
+                                        <div className="w-16 h-12 rounded-lg bg-gray-100 overflow-hidden border border-gray-200">
+                                            <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">Status de Acesso</label>
+                                    <div
+                                        onClick={() => setFormData({ ...formData, is_locked: !formData.is_locked })}
+                                        className={`cursor-pointer flex items-center gap-4 p-4 rounded-xl border-2 transition-all ${formData.is_locked ? 'border-red-100 bg-red-50/50' : 'border-green-100 bg-green-50/50'}`}
+                                    >
+                                        <div className={`p-2 rounded-lg ${formData.is_locked ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+                                            {formData.is_locked ? <Lock size={20} /> : <Unlock size={20} />}
+                                        </div>
+                                        <div>
+                                            <div className={`font-semibold ${formData.is_locked ? 'text-red-900' : 'text-green-900'}`}>
+                                                {formData.is_locked ? 'Conteúdo Bloqueado' : 'Acesso Liberado'}
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                                {formData.is_locked ? 'Alunos verão um cadeado.' : 'Disponível para todos.'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">Copy de Vendas (Modal)</label>
+                                    <textarea
+                                        name="sales_copy"
+                                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all min-h-[100px]"
+                                        value={formData.sales_copy}
+                                        onChange={handleChange}
+                                        placeholder="Texto persuasivo para convencer o aluno a desbloquear..."
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">URL da Imagem de Capa (16:9)</label>
-                        <input
-                            name="image_url"
-                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all"
-                            value={formData.image_url}
-                            onChange={handleChange}
-                            placeholder="https://..."
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">Descrição Curta</label>
-                        <textarea
-                            name="description"
-                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all min-h-[100px]"
-                            value={formData.description}
-                            onChange={handleChange}
-                            placeholder="Aparece no Banner Principal"
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">Copy de Vendas (Para Modal)</label>
-                        <textarea
-                            name="sales_copy"
-                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all min-h-[100px]"
-                            value={formData.sales_copy}
-                            onChange={handleChange}
-                            placeholder="Texto persuasivo que aparece no modal de desbloqueio..."
-                        />
-                    </div>
-
-                    <div className="pt-4">
-                        <Button type="submit" fullWidth disabled={isLoading} className="py-4 text-base font-semibold shadow-lg shadow-green-500/20 hover:shadow-green-500/30">
-                            {isLoading ? 'Publicando...' : 'Publicar na Plataforma'}
+                    <div className="mt-10 pt-6 border-t border-gray-100 flex items-center justify-end gap-3">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => router.back()}
+                            className="px-6"
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            type="submit"
+                            disabled={isLoading}
+                            className="bg-black text-white hover:bg-gray-800 px-8 py-3 rounded-xl font-medium shadow-lg shadow-gray-200 hover:shadow-gray-300 transition-all"
+                        >
+                            {isLoading ? 'Publicando...' : 'Publicar Conteúdo'}
                         </Button>
                     </div>
                 </form>
             </div>
+
+            {/* Quick Preview Hint */}
+            <div className="mt-6 text-center">
+                <p className="text-sm text-gray-400">Este conteúdo será adicionado ao catálogo estilo Netflix.</p>
+            </div>
         </div>
     );
 }
+

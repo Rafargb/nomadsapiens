@@ -613,7 +613,17 @@
     margin: 5px 0;
 }
 
-/* Modal Styles */
+.dropdownGreeting {
+    padding: 8px 20px;
+    font-size: 12px;
+    color: #9ca3af;
+    /* gray-400 */
+    border-bottom: 1px solid #374151;
+    /* gray-700 */
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
 /* Kept for legacy support, though we use router now */
 .modalOverlay {
     position: fixed;

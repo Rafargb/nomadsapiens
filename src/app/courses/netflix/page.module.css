@@ -549,6 +549,70 @@
     box-shadow: 0 0 5px rgba(229, 9, 20, 0.5);
 }
 
+/* Dropdown Logic */
+.navProfile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    /* For absolute dropdown positioning */
+}
+
+/* Desktop Dropdown */
+.desktopDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 200px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    margin-top: 10px;
+    padding: 10px 0;
+    display: flex;
+    /* We toggle this visibility with React state, but styling matches flex column */
+    flex-direction: column;
+    z-index: 100;
+}
+
+/* Arrow indicator for dropdown */
+.desktopDropdown::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 20px;
+    border-width: 0 6px 6px;
+    border-style: solid;
+    border-color: transparent transparent rgba(255, 255, 255, 0.15);
+}
+
+.dropdownItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: #fff;
+    font-size: 13px;
+    text-decoration: none;
+    /* Reset link underline */
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.dropdownItem:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: underline;
+}
+
+.dropdownIcon {
+    opacity: 0.7;
+}
+
+.divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 5px 0;
+}
+
 /* Modal Styles */
 /* Kept for legacy support, though we use router now */
 .modalOverlay {

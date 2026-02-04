@@ -22,6 +22,7 @@ interface Course {
 export default function NetflixDashboard() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [profileMenuOpen, setProfileMenuOpen] = useState(false);
     const [user, setUser] = useState<any>(null);
     const isAdmin = user?.email === 'rafaelbarbosa85rd@gmail.com' || user?.email?.includes('admin');
 
@@ -184,19 +185,57 @@ export default function NetflixDashboard() {
                         <Bell size={20} color="white" />
                         <span className={styles.notificationBadge}>12</span>
                     </div>
-                    <div className={styles.navProfile}>
-                        <div className={styles.avatar}>
-                            <img src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg" alt="User" />
-                        </div>
-                        <ChevronDown size={14} color="white" className="ml-1 transition-transform group-hover:rotate-180" />
-                    </div>
 
-                    {/* Admin Button (kept discreetly) */}
-                    {isAdmin && (
-                        <Link href="/admin/courses" className="ml-4">
-                            <span className="text-xs text-red-500 border border-red-500 px-2 py-1 rounded hover:bg-red-500 hover:text-white transition-colors">Admin</span>
-                        </Link>
-                    )}
+                    {/* Desktop Profile Dropdown */}
+                    <div
+                        className={styles.navProfile}
+                        onMouseEnter={() => setMobileMenuOpen(true)} // Using same state var or new one? strict typed? 
+                        // Better use a new state for desktop hover or click.
+                        // Actually let's use a CLICK handler for mobile-friendly consistency or Hover. Netflix uses Hover.
+                        // Let's use a new state variable specifically for this: profileMenuOpen
+                        onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                    >
+                        <div className={styles.avatar}>
+                            <img src={user?.user_metadata?.avatar_url || "https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg"} alt="User" />
+                        </div>
+                        <ChevronDown size={14} color="white" className={`ml-1 transition-transform ${profileMenuOpen ? 'rotate-180' : ''}`} />
+
+                        {profileMenuOpen && (
+                            <div className={styles.desktopDropdown}>
+                                {/* Show User Name */}
+                                <div className="px-4 py-2 text-xs text-gray-400 border-b border-gray-700 mb-2">
+                                    Olá, {user?.user_metadata?.full_name?.split(' ')[0]}
+                                </div>
+
+                                {isAdmin && (
+                                    <Link href="/admin/courses" className={styles.dropdownItem}>
+                                        <ChevronDown size={14} className="rotate-[-90deg]" /> {/* Placeholder icon */}
+                                        Painel Admin
+                                    </Link>
+                                )}
+
+                                <Link href="#" className={styles.dropdownItem}>
+                                    Minha Conta
+                                </Link>
+                                <Link href="#" className={styles.dropdownItem}>
+                                    Central de Ajuda
+                                </Link>
+
+                                <div className={styles.divider} />
+
+                                <button
+                                    onClick={async () => {
+                                        await supabase.auth.signOut();
+                                        window.location.href = '/';
+                                    }}
+                                    className={styles.dropdownItem}
+                                    style={{ width: '100%', border: 'none', background: 'transparent', textAlign: 'left' }}
+                                >
+                                    Sair da Netflix
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </nav>
 

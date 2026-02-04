@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, Upload, Lock, Unlock, AlignLeft, Image as ImageIcon, Type } from 'lucide-react';
+import { ChevronLeft, Upload, Lock, Unlock, AlignLeft, Image as ImageIcon, Type, ChevronDown } from 'lucide-react';
 
 export default function CreateCoursePage() {
     const router = useRouter();
